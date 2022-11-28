@@ -3,13 +3,13 @@
 class DateTime {
 
 private:
-    _timestamp;
+    unsigned long _timestamp;
 public:
     DateTime(unsigned long timestamp);
     unsigned long getTimestamp();
     unsigned char getYearShort();
     unsigned char getYear();
-    void setYear(unsigned char month)
+    void setYear(unsigned char month);
     unsigned char getMonth();
     void setMonth(unsigned char month);
     unsigned char getDay();
@@ -19,5 +19,5 @@ public:
     unsigned char getMinute();
     void setMinutes(unsigned char minutes);
     unsigned char getSecond();
-    void setSeconds(unsigned char seconds)
+    void setSeconds(unsigned char seconds);
 };

@@ -14,6 +14,5 @@ class DateTimeToole {
 private:
 
 public:
-  static 
 
 };

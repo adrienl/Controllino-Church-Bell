@@ -49,6 +49,7 @@ void displayTimeDate(){
 void setup() {
   display.init();
   rtcManager.init();
+  //rtcManager.setTimeDate(28, 1, 11, 22, 1, 00, 20);
   initInputs();
   initInterrupts();
   displayTimeDate();
@@ -60,7 +61,6 @@ void loop() {
 
   if (mls % 1000 == 0 && mls != lastmls){
     lastmls = mls;
-    TMS++;
     displayTimeDate();
   }
 

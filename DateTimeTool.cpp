@@ -3,15 +3,6 @@
 #include <stdio.h>
 #include <math.h>
 
-typedef struct ALDateTime {
-  unsigned int year;
-  unsigned char month;
-  unsigned char day;
-  unsigned char hour;
-  unsigned char minute;
-  unsigned char second;
-} ALDateTime;
-
 void getDayAndMonthFromPastdays(unsigned int pastdays, unsigned char * month, unsigned char * day){
   unsigned char monthsDays [12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
   unsigned char i = 0;

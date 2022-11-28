@@ -15,8 +15,6 @@ public:
     char getHour();
     char getMinute();
     char getSecond();
-    void addSeconds(unsigned char s);
-    void removeSeconds(unsigned char s);
 
     void fillTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
     void fillDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;

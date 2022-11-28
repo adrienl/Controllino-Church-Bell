@@ -47,14 +47,6 @@ char RTCManager::getSecond(){
   return Controllino_GetSecond();
 }
 
-char RTCManager::addSeconds(unsigned char s){
-  
-}
-
-char RTCManager::removeSeconds(unsigned char s){
-  
-}
-
 void RTCManager::fillTimeStringBuffer(char * buff, unsigned char len){
   snprintf(buff, len, "%02d:%02d:%02d\0", getHour(), getMinute(), getSecond());
 }
