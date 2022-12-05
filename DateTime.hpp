@@ -4,20 +4,28 @@ class DateTime {
 
 private:
     unsigned long _timestamp;
+    unsigned char _timezone;
+    unsigned char _yearShort;
+    unsigned int _year;
+    unsigned char _month;
+    unsigned char _day;
+    unsigned char _hour;
+    unsigned char _minute;
+    unsigned char _second;
+    void build();
 public:
-    DateTime(unsigned long timestamp);
+    DateTime(unsigned long timestamp, unsigned char timezone);
     unsigned long getTimestamp();
+    unsigned char getTimezone();
     unsigned char getYearShort();
     unsigned char getYear();
-    void setYear(unsigned char month);
     unsigned char getMonth();
-    void setMonth(unsigned char month);
     unsigned char getDay();
-    void setDay(unsigned char day);
     unsigned char getHour();
-    void setHours(unsigned char hours);
     unsigned char getMinute();
-    void setMinutes(unsigned char minutes);
     unsigned char getSecond();
-    void setSeconds(unsigned char seconds);
+    
+    void fillTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
+    void fillShortTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 6 bytes;
+    void fillDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
 };

@@ -1,9 +1,5 @@
 #include "BellSequence.hpp"
 
-Foo::Foo(int x) : x(x) {
+BellSequence::BellSequence() {
 
-}
-
-int Foo::getX() {
-    return x;
 }

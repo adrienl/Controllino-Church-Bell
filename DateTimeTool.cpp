@@ -1,49 +1,66 @@
 #include "DateTimeTool.hpp"
-
 #include <stdio.h>
 #include <math.h>
+#include "DateTimeConst.h"
 
-void getDayAndMonthFromPastdays(unsigned int pastdays, unsigned char * month, unsigned char * day){
-  unsigned char monthsDays [12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static bool DateTimeTool::isLeapYear(unsigned int year){ //Est-ce une année bissextile ?
+  if (year % 4 == 0){
+    return true;
+  }
+  if (year % 100 == 0){
+    return true;
+  }
+  if (year % 400 == 0){
+    return true;
+  }
+  return false;
+}
+
+static unsigned int DateTimeTool::leapYearsPastSince1970(unsigned int yearToCompare){
+  unsigned int yearsPast = yearToCompare - TIMESTAMP_ZERO_YEAR;
+  unsigned int leapYearsLength = 0;
+  unsigned int i = 0;
+  while (i <  yearsPast){
+    if (isLeapYear(TIMESTAMP_ZERO_YEAR + i) == true){
+      leapYearsLength++;
+    }
+    i++;
+  }
+  return leapYearsLength;
+}
+
+static void DateTimeTool::getDayAndMonthFromPastdays(unsigned int pastdays, unsigned char * month, unsigned char * day){
   unsigned char i = 0;
   pastdays += 1;
-  while (i < 12 && pastdays > monthsDays[i]){
-    pastdays -= monthsDays[i];
+  while (i < 12 && pastdays > DAYS_MONTH[i]){
+    pastdays -= DAYS_MONTH[i];
     i++;
   }
   *month = i + 1;
   *day = pastdays;
 }
 
-void timestampToDateTime(unsigned long tsorigin, ALDateTime * datetime){
+static void DateTimeTool::timestampToDateTime(unsigned long tsorigin, ALDateTime * datetime){
   unsigned long timestamp = tsorigin;
-  datetime->second = timestamp % 60;
+  datetime->second = timestamp % SEC_IN_MIN;
   timestamp -= datetime->second;
-  timestamp /= 60;
-  datetime->minute = timestamp % 60;
+  timestamp /= SEC_IN_MIN;
+  datetime->minute = timestamp % SEC_IN_MIN;
   timestamp -= datetime->minute;
-  timestamp /= 60;
-  datetime->hour = timestamp % 24;
+  timestamp /= SEC_IN_MIN;
+  datetime->hour = timestamp % HOURS_IN_DAY;
   timestamp -= datetime->hour;
-  timestamp /= 24;
-  datetime->year =  1970 + ((timestamp / (3 * 365 + 366)) * 4);
-  unsigned int yearPast = datetime->year - 1970;
+  timestamp /= HOURS_IN_DAY;
+  datetime->year = TIMESTAMP_ZERO_YEAR + ((timestamp / (3 * DAYS_IN_SDYEAR + DAYS_IN_LPYEAR)) * 4);
+  unsigned int yearPast = datetime->year - TIMESTAMP_ZERO_YEAR;
   unsigned int quartYear = yearPast / 4;
   unsigned int quartYearMod = yearPast % 4;
-  unsigned long daysPast = (quartYear * (365 * 3 + 366)) + (quartYearMod * 365);
+  unsigned long daysPast = (quartYear * (DAYS_IN_SDYEAR * 3 + DAYS_IN_LPYEAR)) + (quartYearMod * DAYS_IN_SDYEAR);
   unsigned long daysPastInYear = timestamp - daysPast;
-  getDayAndMonthFromPastdays(daysPastInYear, &datetime->month, &datetime->day);
+  DateTimeTool::getDayAndMonthFromPastdays(daysPastInYear, &datetime->month, &datetime->day);
 }
 
-void dateToString(ALDateTime datetime, char * strToFill, char len){
-  snprintf(strToFill, len, "%02d/%02d/%04d", datetime.day, datetime.month, datetime.year);
-}
-
-void timeToString(ALDateTime datetime, char * strToFill, char len){
-  snprintf(strToFill, len, "%02d:%02d:%02d", datetime.hour, datetime.minute, datetime.second);
-}
-
-unsigned int dayOfWeek(unsigned int y, unsigned int m, unsigned int d){
+static unsigned int DateTimeTool::dayOfWeek(unsigned int y, unsigned int m, unsigned int d){
     unsigned int total;
     unsigned int yM;
     unsigned int vD;
@@ -62,12 +79,12 @@ unsigned int dayOfWeek(unsigned int y, unsigned int m, unsigned int d){
     return total;
 }
 
-unsigned int summerTimeDayChange(unsigned int y){
-    unsigned int weekDay = dayOfWeek(y, 3, 31);
+static unsigned int DateTimeTool::summerTimeDayChange(unsigned int y){
+    unsigned int weekDay = DateTimeTool::dayOfWeek(y, 3, 31);
     return 31 - weekDay;
 }
 
-unsigned int winterTimeDayChange(unsigned int y){
-    unsigned int weekDay = dayOfWeek(y, 10, 31);
+static unsigned int DateTimeTool::winterTimeDayChange(unsigned int y){
+    unsigned int weekDay = DateTimeTool::dayOfWeek(y, 10, 31);
     return 31 - weekDay;
 }

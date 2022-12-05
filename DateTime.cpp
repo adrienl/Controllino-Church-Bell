@@ -1,61 +1,75 @@
 #include "DateTime.hpp"
 
-DateTime::DateTime(unsigned long timestamp) {
+#include <stdio.h>
+#include "DateTimeConst.h"
+#include "DateTimeTool.hpp"
+
+#define CURRENT_CENTURY 21
+
+DateTime::DateTime(unsigned long timestamp, unsigned char timezone) {
   _timestamp = timestamp;
+  _timezone = timezone;
+  build();
 }
 
-unsigned long getTimestamp(){
-  
+void DateTime::build(){
+  ALDateTime alDateTime;
+  unsigned long timestampzone = _timestamp + ((unsigned long)SEC_IN_HOUR * _timezone);
+  DateTimeTool::timestampToDateTime(timestampzone, &alDateTime);
+   
+  _yearShort =  alDateTime.year - (CURRENT_CENTURY - 1 * 100);
+  _year = alDateTime.year;
+  _month = alDateTime.month;
+  _day = alDateTime.day;
+  _hour = alDateTime.hour;
+  _minute = alDateTime.minute;
+  _second = alDateTime.second;
 }
 
-unsigned char getYearShort(){
-
+unsigned long DateTime::getTimestamp(){
+  return _timestamp;
 }
 
-unsigned char getYear(){
-
+unsigned char DateTime::getTimezone(){
+  return _timezone;
 }
 
-void setYear(unsigned char month){
-
+unsigned char DateTime::getYearShort(){
+  return _yearShort;
 }
 
-unsigned char getMonth(){
-
+unsigned char DateTime::getYear(){
+  return _year;
 }
 
-void setMonth(unsigned char month){
-
+unsigned char DateTime::getMonth(){
+  return _month;
 }
 
-unsigned char getDay(){
-
+unsigned char DateTime::getDay(){
+  return _day;
 }
 
-void setDay(unsigned char day){
-
+unsigned char DateTime::getHour(){
+  return _hour;
 }
 
-unsigned char getHour(){
-
+unsigned char DateTime::getMinute(){
+  return _minute;
 }
 
-void setHours(unsigned char hours){
-
+unsigned char DateTime::getSecond(){
+  return _second;
 }
 
-unsigned char getMinute(){
-  
+void DateTime::fillTimeStringBuffer(char * buff, unsigned char len){
+  snprintf(buff, len, "%02d:%02d:%02d\0", getHour(), getMinute(), getSecond());
 }
 
-void setMinutes(unsigned char minutes){
-
+void DateTime::fillShortTimeStringBuffer(char * buff, unsigned char len){
+  snprintf(buff, len, "%02d:%02d\0", getHour(), getMinute());
 }
 
-unsigned char getSecond(){
-  
-}
-
-void setSeconds(unsigned char seconds){
-
+void DateTime::fillDateStringBuffer(char * buff, unsigned char len){
+  snprintf(buff, len, "%02d/%02d/%02d\0", getDay(), getMonth(), getYear());
 }

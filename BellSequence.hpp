@@ -1,8 +1,6 @@
 #pragma once
 
-class Foo {
+class BellSequence {
 public:
-    int x;
-    Foo(int x);
-    int getX();
+  BellSequence();
 };

@@ -3,13 +3,18 @@
 #include <time.h>
 #include "Display.hpp"
 #include "RTCManager.hpp"
+#include "DateTimeManager.hpp"
 
 #define BT1     CONTROLLINO_A0
 #define BT2     CONTROLLINO_A1
 #define RING_BT CONTROLLINO_IN0
 
+#define SYNC_RTC_EVERY_MIN 60
+#define DEFAULT_TIMEZONE 1
+
 Display display = Display::build2X16();
 RTCManager rtcManager = RTCManager();
+DateTimeManager dateTimeManager = DateTimeManager();
 
 ISR (PCINT1_vect){
   
@@ -29,39 +34,50 @@ void initInputs(){
 
 unsigned long lastmls = 0;
 
-void displayDate(){
+void displayDate(DateTime * dateTimeObj){
   char strDate[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  rtcManager.fillDateStringBuffer(strDate, 9);
+  dateTimeObj->fillDateStringBuffer(strDate, 9);
   display.printStringAt(0, 0, strDate);
 }
 
-void displayTime(){
+void displayTime(DateTime * dateTimeObj){
   char strTime[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  rtcManager.fillTimeStringBuffer(strTime, 9);
+  dateTimeObj->fillTimeStringBuffer(strTime, 9);
   display.printStringAt(0, 1, strTime);
 }
 
-void displayTimeDate(){
-  displayDate();
-  displayTime();
+void displayTimeDate(DateTime * dateTimeObj){
+  displayDate(dateTimeObj);
+  displayTime(dateTimeObj);
+}
+
+void tick(unsigned long tmstp){
+  DateTime dateTime = dateTimeManager.getCurrentDateTime();
+  displayTimeDate(&dateTime);
+}
+
+void rtcUpdateRequest(){
+  Serial.println("RTC Update Requested");
+  unsigned long ts = rtcManager.getTimestamp();
+  dateTimeManager.setTimestamp(ts);
 }
 
 void setup() {
+  Serial.begin(115200);
   display.init();
   rtcManager.init();
-  //rtcManager.setTimeDate(28, 1, 11, 22, 1, 00, 20);
+  //rtcManager.setTimeDate(4, 0, 12, 22, 16, 47, 00);
+  rtcUpdateRequest();
+  dateTimeManager.setTimezone(DEFAULT_TIMEZONE);
+  dateTimeManager.onTick(tick);//Called Every Seconds
+  dateTimeManager.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_MIN);
+  dateTimeManager.onRTCUpdateRequest(rtcUpdateRequest);
   initInputs();
   initInterrupts();
-  displayTimeDate();
+  DateTime dateTime = dateTimeManager.getCurrentDateTime();
+  displayTimeDate(&dateTime);
 }
 
 void loop() {
-
-  unsigned long mls = millis();
-
-  if (mls % 1000 == 0 && mls != lastmls){
-    lastmls = mls;
-    displayTimeDate();
-  }
-
+  dateTimeManager.loop(millis());
 }
