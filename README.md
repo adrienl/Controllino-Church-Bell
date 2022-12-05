@@ -3,14 +3,14 @@ Liturgical Bell Ringing Solution for Controllino Mini
 
 ## TODO
 
-- [x] Integrate RTC Properly 
-- [x] Display Current Date
-- [x] Display Current Time
-- [ ] Display Current Timezone
-- [ ] Display Next Action
-- [x] Manage Timezone
-- [ ] Manage Daylight Saving Time
-- [ ] Manage Bell Ring Sequence
+- ✅ Integrate RTC Properly 
+- ✅ Display Current Date
+- ✅ Display Current Time
+- ⭕️ Display Current Timezone
+- ⭕️ Display Next Action
+- ✅ Manage Timezone
+- ⭕️ Manage Daylight Saving Time
+- ⭕️ Manage Bell Ring Sequence
 
 ## Hardware
 
