@@ -16,10 +16,6 @@ Display display = Display::build2X16();
 RTCManager rtcManager = RTCManager();
 DateTimeManager dateTimeManager = DateTimeManager();
 
-ISR (PCINT1_vect){
-  
-}
-
 void initInterrupts(void){
   PCICR |= (1 << PCIE1);
   PCMSK1 |= (1 << PCINT8 | 1 << PCINT9);
@@ -36,7 +32,7 @@ unsigned long lastmls = 0;
 
 void displayDate(DateTime * dateTimeObj){
   char strDate[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillDateStringBuffer(strDate, 9);
+  dateTimeObj->fillShortDateStringBuffer(strDate, 9);
   display.printStringAt(0, 0, strDate);
 }
 
@@ -66,7 +62,6 @@ void setup() {
   Serial.begin(115200);
   display.init();
   rtcManager.init();
-  //rtcManager.setTimeDate(4, 0, 12, 22, 16, 47, 00);
   rtcUpdateRequest();
   dateTimeManager.setTimezone(DEFAULT_TIMEZONE);
   dateTimeManager.onTick(tick);//Called Every Seconds

@@ -6,19 +6,23 @@ private:
     unsigned long _timestamp;
     unsigned char _timezone;
     unsigned char _yearShort;
-    unsigned int _year;
+    unsigned int  _year;
     unsigned char _month;
     unsigned char _day;
     unsigned char _hour;
     unsigned char _minute;
     unsigned char _second;
-    void build();
+    void buildDatetime();
+    void buildTimestamp();
 public:
-    DateTime(unsigned long timestamp, unsigned char timezone);
+    DateTime(unsigned long ts);
+    DateTime(unsigned long ts, unsigned char timezone);
+    DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc);
+    DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc, unsigned char timezone);
     unsigned long getTimestamp();
     unsigned char getTimezone();
     unsigned char getYearShort();
-    unsigned char getYear();
+    unsigned int getYear();
     unsigned char getMonth();
     unsigned char getDay();
     unsigned char getHour();
@@ -28,4 +32,5 @@ public:
     void fillTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
     void fillShortTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 6 bytes;
     void fillDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
+    void fillShortDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 11 bytes;
 };

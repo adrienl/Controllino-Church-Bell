@@ -2,26 +2,24 @@
 #define __DATETIMETOOL_
 
 #include <stdbool.h>
-
-typedef struct ALDateTime{
-  unsigned char second;
-  unsigned char minute;
-  unsigned char hour;
-  unsigned int year;
-  unsigned char month;
-  unsigned char day;
-} ALDateTime;
+#include "DateTimeConst.h"
+#include "DateTime.hpp"
 
 class DateTimeTool {
-    
-public:
-    static void timestampToDateTime(unsigned long tsorigin, ALDateTime * datetime);
-    static void getDayAndMonthFromPastdays(unsigned int pastdays, unsigned char * month, unsigned char * day);
-    static bool isLeapYear(unsigned int year);
+private:
+    static unsigned long secsPastFrom1970ToCurYear(unsigned int currentYear);
+    static unsigned long secsPastFromJanToLastMonth(unsigned int currentYear, unsigned char currentMonth);
+    static unsigned long secsPastFromFirstDayOfMonthToCurDay(unsigned char currentDay);
+    static unsigned long secsPastFromMidnight(unsigned char h, unsigned char m, unsigned char s);
     static unsigned int leapYearsPastSince1970(unsigned int yearToCompare);
+    static bool getIsLeapYear(unsigned int year);
+    static void getDayAndMonthFromPastdays(unsigned int currentYear, unsigned int pastdays, unsigned char * month, unsigned char * day);
     static unsigned int summerTimeDayChange(unsigned int y);
     static unsigned int winterTimeDayChange(unsigned int y);
     static unsigned int dayOfWeek(unsigned int y, unsigned int m, unsigned int d);
+public:
+    static DateTime timestampToDateTime(unsigned long tsorigin);
+    static unsigned long dateTimeToTimestamp(DateTime * datetime);
 };
 
 

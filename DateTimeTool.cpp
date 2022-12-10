@@ -1,9 +1,14 @@
 #include "DateTimeTool.hpp"
 #include <stdio.h>
 #include <math.h>
+#include "DateTime.hpp"
 #include "DateTimeConst.h"
 
-static bool DateTimeTool::isLeapYear(unsigned int year){ //Est-ce une année bissextile ?
+/*
+ * Private
+ */
+
+static bool DateTimeTool::getIsLeapYear(unsigned int year){ //Est-ce une année bissextile ?
   if (year % 4 == 0){
     return true;
   }
@@ -21,7 +26,7 @@ static unsigned int DateTimeTool::leapYearsPastSince1970(unsigned int yearToComp
   unsigned int leapYearsLength = 0;
   unsigned int i = 0;
   while (i <  yearsPast){
-    if (isLeapYear(TIMESTAMP_ZERO_YEAR + i) == true){
+    if (getIsLeapYear(TIMESTAMP_ZERO_YEAR + i) == true){
       leapYearsLength++;
     }
     i++;
@@ -29,35 +34,72 @@ static unsigned int DateTimeTool::leapYearsPastSince1970(unsigned int yearToComp
   return leapYearsLength;
 }
 
-static void DateTimeTool::getDayAndMonthFromPastdays(unsigned int pastdays, unsigned char * month, unsigned char * day){
+static void DateTimeTool::getDayAndMonthFromPastdays(unsigned int currentYear, unsigned int pastdays, unsigned char * month, unsigned char * day){
   unsigned char i = 0;
   pastdays += 1;
-  while (i < 12 && pastdays > DAYS_MONTH[i]){
-    pastdays -= DAYS_MONTH[i];
-    i++;
+  bool isLeapYear = getIsLeapYear(currentYear);
+  if (isLeapYear){
+    while (i < 12 && pastdays > DAYS_LPMONTH[i]){
+      pastdays -= DAYS_LPMONTH[i];
+      i++;
+    }
+  }else{
+    while (i < 12 && pastdays > DAYS_SDMONTH[i]){
+      pastdays -= DAYS_SDMONTH[i];
+      i++;
+    }
   }
   *month = i + 1;
   *day = pastdays;
 }
 
-static void DateTimeTool::timestampToDateTime(unsigned long tsorigin, ALDateTime * datetime){
-  unsigned long timestamp = tsorigin;
-  datetime->second = timestamp % SEC_IN_MIN;
-  timestamp -= datetime->second;
-  timestamp /= SEC_IN_MIN;
-  datetime->minute = timestamp % SEC_IN_MIN;
-  timestamp -= datetime->minute;
-  timestamp /= SEC_IN_MIN;
-  datetime->hour = timestamp % HOURS_IN_DAY;
-  timestamp -= datetime->hour;
-  timestamp /= HOURS_IN_DAY;
-  datetime->year = TIMESTAMP_ZERO_YEAR + ((timestamp / (3 * DAYS_IN_SDYEAR + DAYS_IN_LPYEAR)) * 4);
-  unsigned int yearPast = datetime->year - TIMESTAMP_ZERO_YEAR;
-  unsigned int quartYear = yearPast / 4;
-  unsigned int quartYearMod = yearPast % 4;
-  unsigned long daysPast = (quartYear * (DAYS_IN_SDYEAR * 3 + DAYS_IN_LPYEAR)) + (quartYearMod * DAYS_IN_SDYEAR);
-  unsigned long daysPastInYear = timestamp - daysPast;
-  DateTimeTool::getDayAndMonthFromPastdays(daysPastInYear, &datetime->month, &datetime->day);
+static unsigned long DateTimeTool::secsPastFrom1970ToCurYear(unsigned int currentYear){ //Private
+  unsigned int leapYearsLength;
+  unsigned long leapSec1970ToCurY;
+  unsigned long stdrSec1970ToCurY;
+  unsigned long sec1970ToCurY;
+  unsigned int yearsPast;
+ 
+  yearsPast = currentYear - TIMESTAMP_ZERO_YEAR;
+  leapYearsLength = DateTimeTool::leapYearsPastSince1970(currentYear);
+  leapSec1970ToCurY = SEC_IN_LEAP_YEAR * leapYearsLength;
+  stdrSec1970ToCurY = SEC_IN_STDR_YEAR * (currentYear - TIMESTAMP_ZERO_YEAR - leapYearsLength);
+  sec1970ToCurY = stdrSec1970ToCurY + leapSec1970ToCurY;
+
+  return sec1970ToCurY;
+}
+
+static unsigned long DateTimeTool::secsPastFromJanToLastMonth(unsigned int currentYear, unsigned char currentMonth){ //Private
+  unsigned char currentMonthIdx = currentMonth - 1;
+  unsigned long secondsPast = 0;
+  unsigned char i = 0;
+  bool isLeapYear = getIsLeapYear(currentYear);
+  if (isLeapYear){
+    while (i < currentMonthIdx){
+      secondsPast += DAYS_LPMONTH[i] * SEC_IN_DAY;
+      i++;
+    }
+  }else{
+    while (i < currentMonthIdx){
+      secondsPast += DAYS_SDMONTH[i] * SEC_IN_DAY;
+      i++;
+    }
+  }
+
+  return secondsPast;
+}
+
+static unsigned long DateTimeTool::secsPastFromFirstDayOfMonthToCurDay(unsigned char currentDay){ //Private
+  unsigned char daysPast = currentDay - 1;
+  return SEC_IN_DAY * daysPast;
+}
+
+static unsigned long DateTimeTool::secsPastFromMidnight(unsigned char h, unsigned char m, unsigned char s){ //Private
+  unsigned long secsPast = 0;
+  unsigned long th = h * (unsigned long)(SEC_IN_HOUR);
+  int tm = m * SEC_IN_MIN;
+  secsPast = th + tm + s;
+  return secsPast;
 }
 
 static unsigned int DateTimeTool::dayOfWeek(unsigned int y, unsigned int m, unsigned int d){
@@ -87,4 +129,45 @@ static unsigned int DateTimeTool::summerTimeDayChange(unsigned int y){
 static unsigned int DateTimeTool::winterTimeDayChange(unsigned int y){
     unsigned int weekDay = DateTimeTool::dayOfWeek(y, 10, 31);
     return 31 - weekDay;
+}
+
+/*
+ * Public
+ */
+
+static unsigned long DateTimeTool::dateTimeToTimestamp(DateTime * datetime){
+  unsigned long ts;
+  unsigned long yearSecPast = secsPastFrom1970ToCurYear(datetime->getYear());
+  unsigned long monthSecPast = secsPastFromJanToLastMonth(datetime->getYear(), datetime->getMonth());
+  unsigned long daysSecPast = secsPastFromFirstDayOfMonthToCurDay(datetime->getDay());
+  unsigned long timeSecPast = secsPastFromMidnight(datetime->getHour(), datetime->getMinute(), datetime->getSecond());
+  ts = yearSecPast + monthSecPast + daysSecPast + timeSecPast;
+  return ts;
+}
+
+static DateTime DateTimeTool::timestampToDateTime(unsigned long tsorigin){
+  unsigned long timestamp = tsorigin;
+  unsigned char second;
+  unsigned char minute;
+  unsigned char hour;
+  unsigned char day;
+  unsigned char month;
+  unsigned int year;
+  second = timestamp % SEC_IN_MIN;
+  timestamp -= second;
+  minute = (timestamp % SEC_IN_HOUR)/MIN_IN_HOUR;
+  timestamp -= timestamp % SEC_IN_HOUR;
+  hour = timestamp % SEC_IN_DAY / SEC_IN_HOUR;
+  timestamp -= timestamp % HOURS_IN_DAY;
+  unsigned int daysInFourYears = (3 * DAYS_IN_SDYEAR + DAYS_IN_LPYEAR);
+  unsigned long secondsInFourYears = SEC_IN_DAY * daysInFourYears;
+  unsigned long remainingYearsSec = timestamp % secondsInFourYears;
+  unsigned int yearPastFirst = ((timestamp - remainingYearsSec) / secondsInFourYears) * 4;
+  unsigned long remainingCurYearsSec = remainingYearsSec % SEC_IN_STDR_YEAR;
+  unsigned int yearPastLast = (remainingYearsSec - remainingCurYearsSec) / SEC_IN_STDR_YEAR;
+  unsigned int yearPast = yearPastFirst + yearPastLast;
+  year = yearPast + TIMESTAMP_ZERO_YEAR;
+  unsigned int daysPastInYear = remainingCurYearsSec / SEC_IN_DAY;
+  DateTimeTool::getDayAndMonthFromPastdays(year, daysPastInYear, &month, &day);
+  return DateTime(year, month, day, hour, minute, second);
 }
