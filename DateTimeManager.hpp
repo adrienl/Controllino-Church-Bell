@@ -10,13 +10,13 @@ private:
     void (*_tickFunc) (unsigned long ts);
     void (*_rtcUpdateRequestFunc) ();
     unsigned long _lastmls;
-    unsigned char _currentTimezone;
+    TimeZone _currentTimezone;
     unsigned int _updateRTCRequestFreqMin;
     
 public:
     DateTimeManager();
+    DateTimeManager(TimeZone timezone);
     void setTimestamp(unsigned long ts);
-    void setTimezone(unsigned char tz);
     void loop(unsigned long mls);
     void setRTCUpdateRequestFrequency(unsigned int freqMin);
     void onTick(void (*tickCall)(unsigned long ts));

@@ -14,7 +14,8 @@
 
 Display display = Display::build2X16();
 RTCManager rtcManager = RTCManager();
-DateTimeManager dateTimeManager = DateTimeManager();
+TimeZone tz = TimeZone::buildEuropeParisTimezone();
+DateTimeManager dateTimeManager = DateTimeManager(tz);
 
 void initInterrupts(void){
   PCICR |= (1 << PCIE1);
@@ -63,7 +64,6 @@ void setup() {
   display.init();
   rtcManager.init();
   rtcUpdateRequest();
-  dateTimeManager.setTimezone(DEFAULT_TIMEZONE);
   dateTimeManager.onTick(tick);//Called Every Seconds
   dateTimeManager.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_MIN);
   dateTimeManager.onRTCUpdateRequest(rtcUpdateRequest);

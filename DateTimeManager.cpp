@@ -1,10 +1,15 @@
 #include "DateTimeManager.hpp"
 #include <time.h>
 
-DateTimeManager::DateTimeManager() {
+DateTimeManager::DateTimeManager() : _currentTimezone(TimeZone::buildUTC0Timezone()) {
   _timestamp = 0;
   _lastmls = 0;
-  _currentTimezone = 0;
+  _updateRTCRequestFreqMin = 60;//Default every 60 minutes
+}
+
+DateTimeManager::DateTimeManager(TimeZone timezone) : _currentTimezone(timezone){
+  _timestamp = 0;
+  _lastmls = 0;
   _updateRTCRequestFreqMin = 60;//Default every 60 minutes
 }
 
@@ -38,10 +43,6 @@ void DateTimeManager::onTick(void (*tickFunc)(unsigned long)){
 
 void DateTimeManager::onRTCUpdateRequest(void (*onRTCUpdateRequest)()){
   _rtcUpdateRequestFunc = onRTCUpdateRequest;
-}
-
-void DateTimeManager::setTimezone(unsigned char tz){
-  _currentTimezone = tz;
 }
 
 void DateTimeManager::setRTCUpdateRequestFrequency(unsigned int freqMin){

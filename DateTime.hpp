@@ -1,10 +1,12 @@
 #pragma once
 
+#include "TimeZone.hpp"
+
 class DateTime {
 
 private:
     unsigned long _timestamp;
-    unsigned char _timezone;
+    TimeZone _timezone;
     unsigned char _yearShort;
     unsigned int  _year;
     unsigned char _month;
@@ -16,11 +18,11 @@ private:
     void buildTimestamp();
 public:
     DateTime(unsigned long ts);
-    DateTime(unsigned long ts, unsigned char timezone);
+    DateTime(unsigned long ts, TimeZone timezone);
     DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc);
-    DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc, unsigned char timezone);
+    DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc, TimeZone timezone);
     unsigned long getTimestamp();
-    unsigned char getTimezone();
+    TimeZone getTimezone();
     unsigned char getYearShort();
     unsigned int getYear();
     unsigned char getMonth();
