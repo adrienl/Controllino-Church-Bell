@@ -3,19 +3,19 @@
 #include <time.h>
 #include "Display.hpp"
 #include "RTCManager.hpp"
-#include "DateTimeManager.hpp"
+#include "ClockHandler.hpp"
 
 #define BT1     CONTROLLINO_A0
 #define BT2     CONTROLLINO_A1
 #define RING_BT CONTROLLINO_IN0
 
-#define SYNC_RTC_EVERY_MIN 60
+#define SYNC_RTC_EVERY_XMIN 1//Update every 6 hours
 #define DEFAULT_TIMEZONE 1
 
 Display display = Display::build2X16();
 RTCManager rtcManager = RTCManager();
 TimeZone tz = TimeZone::buildEuropeParisTimezone();
-DateTimeManager dateTimeManager = DateTimeManager(tz);
+ClockHandler clockhandler = ClockHandler(tz);
 
 void initInterrupts(void){
   PCICR |= (1 << PCIE1);
@@ -43,20 +43,34 @@ void displayTime(DateTime * dateTimeObj){
   display.printStringAt(0, 1, strTime);
 }
 
+void displayTimeZone(){
+  char dstName[5] = {0, 0, 0, 0, 0};
+  if (clockhandler.isDST()){
+    tz.getRegionalShortDSTName(dstName, 5);
+  }else{
+    tz.getRegionalShortName(dstName, 5);
+  }
+  Serial.println(dstName);
+  display.clearAt(9, 1, 4);
+  display.printStringAt(9, 1, dstName);
+}
+
 void displayTimeDate(DateTime * dateTimeObj){
   displayDate(dateTimeObj);
   displayTime(dateTimeObj);
+  displayTimeZone();
 }
 
 void tick(unsigned long tmstp){
-  DateTime dateTime = dateTimeManager.getCurrentDateTime();
+  DateTime dateTime = clockhandler.getCurrentDateTime();
   displayTimeDate(&dateTime);
 }
 
 void rtcUpdateRequest(){
   Serial.println("RTC Update Requested");
   unsigned long ts = rtcManager.getTimestamp();
-  dateTimeManager.setTimestamp(ts);
+  clockhandler.setTimestamp(ts);
+  clockhandler.updateDSTState();
 }
 
 void setup() {
@@ -64,15 +78,15 @@ void setup() {
   display.init();
   rtcManager.init();
   rtcUpdateRequest();
-  dateTimeManager.onTick(tick);//Called Every Seconds
-  dateTimeManager.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_MIN);
-  dateTimeManager.onRTCUpdateRequest(rtcUpdateRequest);
+  clockhandler.onTick(tick);//Called Every Seconds
+  clockhandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
+  clockhandler.onRTCUpdateRequest(rtcUpdateRequest);
   initInputs();
   initInterrupts();
-  DateTime dateTime = dateTimeManager.getCurrentDateTime();
+  DateTime dateTime = clockhandler.getCurrentDateTime();
   displayTimeDate(&dateTime);
 }
 
 void loop() {
-  dateTimeManager.loop(millis());
+  clockhandler.loop(millis());
 }

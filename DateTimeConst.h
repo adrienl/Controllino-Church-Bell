@@ -18,6 +18,13 @@
 #define SEC_IN_STDR_YEAR 31536000
 #define SEC_IN_LEAP_YEAR 31622400
 
+#define DST_MONTH_BEGIN 3
+#define DST_HOUR_BEGIN  2
+#define DST_MIN_BEGIN   0   
+#define DST_MONTH_END   10
+#define DST_HOUR_END    3
+#define DST_MIN_END     0
+
 const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 

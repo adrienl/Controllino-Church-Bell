@@ -2,22 +2,23 @@
 
 class TimeZone {
   private:
-    char _title {};
-    char _regionalShortName {};
-    char _regionalShortSummerName {};
+    char _title[16];
+    char _regionalShortName[4];
+    char _regionalShortDSTName[5];
     int _offset;
-    int _summerOffset;
-    bool _hasSummerOffset;
+    int _dstOffset;
+    bool _hasDSTOffset;
+    bool _isDSTOffset;
   public:
-    TimeZone(char title[16], int offset);
-    TimeZone(char title[16], char regionalShortName[4], int offset);
-    TimeZone(char title[16], char regionalShortName[4], char regionalShortSummerName[5], int offset, int summerOffset);
-    int getUTCOffsetInMinutes();
-    int getSummerUTCOffsetInMinutes();
+    TimeZone(char * title, int offset);
+    TimeZone(char * title, char * regionalShortName, int offset);
+    TimeZone(char * title, char * regionalShortName, char * regionalShortSummerName, int offset, int summerOffset);
+    int getOffsetInMinutes();
+    int getDSTOffsetInMinutes();
     void getTitle(char * buff, unsigned char len);
     void getRegionalShortName(char * buff, unsigned char len);
-    void getRegionalShortSummerName(char * buff, unsigned char len);
-    bool changeOffsetInSummer();
+    void getRegionalShortDSTName(char * buff, unsigned char len);
+    bool hasDSTOffset();
     //Static
     
     static TimeZone buildEuropeParisTimezone();

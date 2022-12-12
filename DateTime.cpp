@@ -6,44 +6,42 @@
 
 #define CURRENT_CENTURY 21
 
-DateTime::DateTime(unsigned long timestamp) : _timezone(TimeZone::buildUTC0Timezone()) {
-  _timestamp = timestamp;
+DateTime::DateTime(unsigned long timestamp) : _timestamp(timestamp), _timeShift(0) {
   buildDatetime();
 }
 
-DateTime::DateTime(unsigned long timestamp, TimeZone timezone) : _timezone(timezone) {
-  _timestamp = timestamp;
+DateTime::DateTime(unsigned long timestamp, int timeShift) : _timestamp(timestamp), _timeShift(timeShift) {
   buildDatetime();
 }
 
-DateTime::DateTime(unsigned int year, unsigned char month, unsigned char day, unsigned char hour, unsigned char minute, unsigned char second) : _timezone(TimeZone::buildUTC0Timezone()) {
+DateTime::DateTime(unsigned int year, unsigned char month, unsigned char day, unsigned char hour, unsigned char minute, unsigned char second) {
   _year = year;
   _month = month;
   _day = day;
   _hour = hour;
   _minute = minute;
   _second = second;
+  _timeShift = 0;
   buildTimestamp();
 }
 
-DateTime::DateTime(unsigned int year, unsigned char month, unsigned char day, unsigned char hour, unsigned char minute, unsigned char second, TimeZone timezone) : _timezone(timezone) {
+DateTime::DateTime(unsigned int year, unsigned char month, unsigned char day, unsigned char hour, unsigned char minute, unsigned char second, int timeShift) {
   _year = year;
   _month = month;
   _day = day;
   _hour = hour;
   _minute = minute;
   _second = second;
+  _timeShift = timeShift;
   buildTimestamp();
 }
 
 void DateTime::buildTimestamp(){
-  unsigned long timestampzone = _timestamp + ((unsigned long)SEC_IN_MIN * _timezone.getUTCOffsetInMinutes());
-  unsigned long ts = DateTimeTool::dateTimeToTimestamp(this);
-  _timestamp = ts;
+  _timestamp = DateTimeTool::dateTimeToTimestamp(this);
 }
 
 void DateTime::buildDatetime(){
-  unsigned long timestampzone = _timestamp + ((unsigned long)SEC_IN_MIN * _timezone.getUTCOffsetInMinutes());
+  unsigned long timestampzone = _timestamp + ((unsigned long)SEC_IN_MIN * _timeShift);
   DateTime datetime = DateTimeTool::timestampToDateTime(timestampzone);
    
   _yearShort =  datetime.getYear() - ((CURRENT_CENTURY - 1) * 100);
@@ -59,8 +57,8 @@ unsigned long DateTime::getTimestamp(){
   return _timestamp;
 }
 
-TimeZone DateTime::getTimezone(){
-  return _timezone;
+int DateTime::getTimeShift(){
+  return _timeShift;
 }
 
 unsigned char DateTime::getYearShort(){

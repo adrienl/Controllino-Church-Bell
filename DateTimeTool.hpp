@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "DateTimeConst.h"
 #include "DateTime.hpp"
+#include "Timezone.hpp"
 
 class DateTimeTool {
 private:
@@ -12,14 +13,16 @@ private:
     static unsigned long secsPastFromFirstDayOfMonthToCurDay(unsigned char currentDay);
     static unsigned long secsPastFromMidnight(unsigned char h, unsigned char m, unsigned char s);
     static unsigned int leapYearsPastSince1970(unsigned int yearToCompare);
-    static bool getIsLeapYear(unsigned int year);
     static void getDayAndMonthFromPastdays(unsigned int currentYear, unsigned int pastdays, unsigned char * month, unsigned char * day);
-    static unsigned int summerTimeDayChange(unsigned int y);
-    static unsigned int winterTimeDayChange(unsigned int y);
     static unsigned int dayOfWeek(unsigned int y, unsigned int m, unsigned int d);
+    static bool getIsLeapYear(unsigned int year);
 public:
     static DateTime timestampToDateTime(unsigned long tsorigin);
     static unsigned long dateTimeToTimestamp(DateTime * datetime);
+    static unsigned char DSTTimeDayBegin(unsigned int y);
+    static unsigned char DSTTimeDayEnd(unsigned int y);
+    static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year, TimeZone tz);
+    static DateTime DateTimeTool::DSTEndDatetime(unsigned int year, TimeZone tz);
 };
 
 

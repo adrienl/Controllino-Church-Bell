@@ -121,16 +121,6 @@ static unsigned int DateTimeTool::dayOfWeek(unsigned int y, unsigned int m, unsi
     return total;
 }
 
-static unsigned int DateTimeTool::summerTimeDayChange(unsigned int y){
-    unsigned int weekDay = DateTimeTool::dayOfWeek(y, 3, 31);
-    return 31 - weekDay;
-}
-
-static unsigned int DateTimeTool::winterTimeDayChange(unsigned int y){
-    unsigned int weekDay = DateTimeTool::dayOfWeek(y, 10, 31);
-    return 31 - weekDay;
-}
-
 /*
  * Public
  */
@@ -141,7 +131,7 @@ static unsigned long DateTimeTool::dateTimeToTimestamp(DateTime * datetime){
   unsigned long monthSecPast = secsPastFromJanToLastMonth(datetime->getYear(), datetime->getMonth());
   unsigned long daysSecPast = secsPastFromFirstDayOfMonthToCurDay(datetime->getDay());
   unsigned long timeSecPast = secsPastFromMidnight(datetime->getHour(), datetime->getMinute(), datetime->getSecond());
-  ts = yearSecPast + monthSecPast + daysSecPast + timeSecPast;
+  ts = yearSecPast + monthSecPast + daysSecPast + timeSecPast - (datetime->getTimeShift() * 60);
   return ts;
 }
 
@@ -170,4 +160,24 @@ static DateTime DateTimeTool::timestampToDateTime(unsigned long tsorigin){
   unsigned int daysPastInYear = remainingCurYearsSec / SEC_IN_DAY;
   DateTimeTool::getDayAndMonthFromPastdays(year, daysPastInYear, &month, &day);
   return DateTime(year, month, day, hour, minute, second);
+}
+
+static unsigned char DateTimeTool::DSTTimeDayBegin(unsigned int y){
+    unsigned int weekDay = DateTimeTool::dayOfWeek(y, DST_MONTH_BEGIN, 31);
+    return 31 - weekDay;
+}
+
+static unsigned char DateTimeTool::DSTTimeDayEnd(unsigned int y){
+    unsigned int weekDay = DateTimeTool::dayOfWeek(y, DST_MONTH_END, 31);
+    return 31 - weekDay;
+}
+
+static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year, TimeZone tz){
+    unsigned char dstBeginDay = DSTTimeDayBegin(year);
+    return DateTime(year, DST_MONTH_BEGIN, dstBeginDay, DST_HOUR_BEGIN, DST_MIN_BEGIN, 0, tz.getOffsetInMinutes());
+}
+
+static DateTime DateTimeTool::DSTEndDatetime(unsigned int year, TimeZone tz){
+    unsigned char dstEndDay = DSTTimeDayEnd(year);
+    return DateTime(year, DST_MONTH_END, dstEndDay, DST_HOUR_END, DST_MIN_END, 0, tz.getDSTOffsetInMinutes());
 }

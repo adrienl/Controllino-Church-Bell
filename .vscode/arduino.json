@@ -1,0 +1,5 @@
+{
+    "board": "CONTROLLINO_Boards:avr:controllino_mini",
+    "port": "/dev/tty.usbmodem14101",
+    "sketch": "Controllino-Church-Bell.ino"
+}
