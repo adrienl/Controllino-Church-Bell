@@ -27,6 +27,6 @@ Written on Arduino IDE 1.8.19
 - Set the RTC Switch ON
 - Upload the code
 
-### Display
+## Display
 
 - On Pin Header : SCL/SDA/5V/GND
