@@ -9,7 +9,7 @@
 #define BT2     CONTROLLINO_A1
 #define RING_BT CONTROLLINO_IN0
 
-#define SYNC_RTC_EVERY_XMIN 1//Update every 6 hours
+#define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 #define DEFAULT_TIMEZONE 1
 
 Display display = Display::build2X16();
