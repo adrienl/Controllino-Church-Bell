@@ -5,15 +5,16 @@ Written on Arduino IDE 1.8.19
 
 ## TODO
 
-- ✅ Integrate RTC Properly 
+- ✅ Controllino RTC
 - ✅ Display Current Date
 - ✅ Display Current Time
 - ✅ Display Current Timezone
-- ⭕️ Edit Date & Time
+- 🟠 Adjust Time
+- ⭕️ Adjust Date
 - ✅ Manage Timezone
 - ✅ Manage Daylight Saving Time
 - ⭕️ Manage Ringing Schedule
-- ⭕️ Manage Ringing Sequence
+- 🟠 Manage Ringing Sequence
 - ⭕️ Display Next Action
 
 ## Hardware
