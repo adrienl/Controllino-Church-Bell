@@ -30,7 +30,6 @@ void ClockHandler::updateDSTState(){
   if (_DSTTimestamps[0] == 0 || _DSTTimestamps[1] == 0){
     internalUpdateDSTOnYear(dt.getYear());
   }
-  
   if(dt.getUTCTimestamp() < _DSTTimestamps[0]){
     _isDST = false;
     return;
@@ -57,9 +56,21 @@ bool ClockHandler::isDST(){ // To update
   return _isDST;
 }
 
+void ClockHandler::internalEachHour(){
+  updateDSTState();
+}
+
 void ClockHandler::internalTick(){
   if (_timestamp % (_updateRTCRequestFreqMin * 60) == 0){
     _rtcUpdateRequestFunc();
+  }
+  if (_timestamp % 60 == 0){
+    internalEachHour();
+    _everyMinutesFunc(_timestamp);
+  }
+  if (_timestamp % 3600 == 0){
+    internalEachHour();
+    _everyHoursFunc(_timestamp);
   }
 }
 
@@ -69,13 +80,21 @@ void ClockHandler::loop(unsigned long mls){
     if (mls % 1000 == 0){//Called every Seconds
       _timestamp++;
       internalTick();
-      _tickFunc(_timestamp);
+      _everySecondsFunc(_timestamp);
     }
   }
 }
 
-void ClockHandler::onTick(void (*tickFunc)(unsigned long)){
-  _tickFunc = tickFunc;
+void ClockHandler::onEverySeconds(void (*fnc)(unsigned long)){
+  _everySecondsFunc = fnc;
+}
+
+void ClockHandler::onEveryMinutes(void (*fnc)(unsigned long)){
+  _everyMinutesFunc = fnc;
+}
+
+void ClockHandler::onEveryHours(void (*fnc)(unsigned long)){
+  _everyHoursFunc = fnc;
 }
 
 void ClockHandler::onRTCUpdateRequest(void (*onRTCUpdateRequest)()){

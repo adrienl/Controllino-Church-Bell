@@ -125,7 +125,7 @@ static unsigned int DateTimeTool::dayOfWeek(unsigned int y, unsigned int m, unsi
  * Public
  */
 
-static unsigned long DateTimeTool::dateTimeToUTCTimestamp(DateTime * datetime){
+static unsigned long DateTimeTool::dateTimeToLocalTimestamp(DateTime * datetime){
   unsigned long ts;
   unsigned int year = datetime->getYear();
   unsigned char month = datetime->getMonth();
@@ -141,8 +141,8 @@ static unsigned long DateTimeTool::dateTimeToUTCTimestamp(DateTime * datetime){
   return ts;
 }
 
-static unsigned long DateTimeTool::dateTimeToLocalTimestamp(DateTime * datetime){
-  return dateTimeToUTCTimestamp(datetime) + (datetime->getTimeShift() * 60);
+static unsigned long DateTimeTool::dateTimeToUTCTimestamp(DateTime * datetime){
+  return dateTimeToLocalTimestamp(datetime) - (datetime->getTimeShift() * 60);
 }
 
 static DateTime DateTimeTool::timestampToDateTime(unsigned long tsorigin){

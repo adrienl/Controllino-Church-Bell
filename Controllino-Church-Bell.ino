@@ -5,6 +5,9 @@
 #include "RTCManager.hpp"
 #include "ClockHandler.hpp"
 
+//1648256390 2023 Summer time
+//1667005185 2023 Classik time
+
 #define BT1     CONTROLLINO_A2
 static bool     BT1_PUSHED = false;
 #define BT2     CONTROLLINO_A3
@@ -47,38 +50,46 @@ void displayTimeZone(){
   display.printStringAt(9, 1, dstName);
 }
 
-void displayTimeDate(DateTime * dateTimeObj){
-  displayDate(dateTimeObj);
-  displayTime(dateTimeObj);
+void updateFullDisplay(){
+  DateTime dateTime = clockhandler.getCurrentDateTime();
+  displayDate(&dateTime);
+  displayTime(&dateTime);
   displayTimeZone();
 }
 
-void updateDisplay(){
+void everyHours(unsigned long tmstp){
   DateTime dateTime = clockhandler.getCurrentDateTime();
-  displayTimeDate(&dateTime);
+  displayDate(&dateTime);
+  displayTimeZone();
 }
 
-void tick(unsigned long tmstp){
-  updateDisplay();
+void everyMinutes(unsigned long tmstp){
+  //Check For Bell Rings;
+}
+
+void everySeconds(unsigned long tmstp){
+  DateTime dateTime = clockhandler.getCurrentDateTime();
+  displayTime(&dateTime);
 }
 
 void rtcUpdateRequest(){
   unsigned long ts = rtcManager.getTimestamp();
   clockhandler.setTimestamp(ts);
-  clockhandler.updateDSTState();
 }
 
 void setup() {
   Serial.begin(115200);
   display.init();
   rtcManager.init();
-  //rtcManager.setFromTimestamp(1671066354);
+  //rtcManager.setFromTimestamp(1671143122);
   rtcUpdateRequest();
-  clockhandler.onTick(tick);//Called Every Seconds
+  clockhandler.onEverySeconds(everySeconds);
+  clockhandler.onEveryMinutes(everyMinutes);
+  clockhandler.onEveryHours(everyHours);
   clockhandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
   clockhandler.onRTCUpdateRequest(rtcUpdateRequest);
   initInputs();
-  updateDisplay();
+  updateFullDisplay();
 }
 
 void onPushed(unsigned int button){
@@ -100,6 +111,7 @@ void onReleased(unsigned int button){
 void loop() {
   clockhandler.loop(millis());
   bool bt1 = digitalRead(BT1);
+  //Serial.println(bt1);
   if (bt1 > 0 && BT1_PUSHED == false){
     BT1_PUSHED = true;
     onPushed(BT1);

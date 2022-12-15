@@ -7,15 +7,19 @@ class ClockHandler {
 
 private:
     unsigned long _timestamp;
-    void (*_tickFunc) (unsigned long ts);
+    void (*_everySecondsFunc) (unsigned long ts);
+    void (*_everyMinutesFunc) (unsigned long ts);
+    void (*_everyHoursFunc) (unsigned long ts);
     void (*_rtcUpdateRequestFunc) ();
     unsigned long _lastmls;
     TimeZone _currentTimezone;
     unsigned int _updateRTCRequestFreqMin;
-    void internalTick();
     bool _isDST;
     unsigned long _DSTTimestamps[2];
+    
     void internalUpdateDSTOnYear(unsigned int year);
+    void internalEachHour();
+    void internalTick();
     
 public:
     ClockHandler();
@@ -24,7 +28,9 @@ public:
     void updateDSTState();
     void loop(unsigned long mls);
     void setRTCUpdateRequestFrequency(unsigned int freqMin);
-    void onTick(void (*tickCall)(unsigned long ts));
+    void onEverySeconds(void (*tickCall)(unsigned long ts));
+    void onEveryMinutes(void (*tickCall)(unsigned long ts));
+    void onEveryHours(void (*tickCall)(unsigned long ts));
     void onRTCUpdateRequest(void (*rtcUpdateRequest)());
     DateTime getCurrentDateTime();
     bool isDST();
