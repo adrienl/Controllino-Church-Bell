@@ -5,10 +5,10 @@
 #include "RTCManager.hpp"
 #include "ClockHandler.hpp"
 
-#define BT1     CONTROLLINO_A0
-#define BT2     CONTROLLINO_A1
-#define RING_BT CONTROLLINO_IN0
-
+#define BT1     CONTROLLINO_A2
+static bool     BT1_PUSHED = false;
+#define BT2     CONTROLLINO_A3
+static bool     BT2_PUSHED = false;
 #define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 #define DEFAULT_TIMEZONE 1
 
@@ -17,16 +17,9 @@ RTCManager rtcManager = RTCManager();
 TimeZone tz = TimeZone::buildEuropeParisTimezone();
 ClockHandler clockhandler = ClockHandler(tz);
 
-void initInterrupts(void){
-  PCICR |= (1 << PCIE1);
-  PCMSK1 |= (1 << PCINT8 | 1 << PCINT9);
-  sei();
-}
-
 void initInputs(){
   pinMode(INPUT, BT1);
   pinMode(INPUT, BT2);
-  pinMode(INPUT, RING_BT);
 }
 
 unsigned long lastmls = 0;
@@ -50,7 +43,6 @@ void displayTimeZone(){
   }else{
     tz.getRegionalShortName(dstName, 5);
   }
-  Serial.println(dstName);
   display.clearAt(9, 1, 4);
   display.printStringAt(9, 1, dstName);
 }
@@ -61,13 +53,16 @@ void displayTimeDate(DateTime * dateTimeObj){
   displayTimeZone();
 }
 
-void tick(unsigned long tmstp){
+void updateDisplay(){
   DateTime dateTime = clockhandler.getCurrentDateTime();
   displayTimeDate(&dateTime);
 }
 
+void tick(unsigned long tmstp){
+  updateDisplay();
+}
+
 void rtcUpdateRequest(){
-  Serial.println("RTC Update Requested");
   unsigned long ts = rtcManager.getTimestamp();
   clockhandler.setTimestamp(ts);
   clockhandler.updateDSTState();
@@ -77,16 +72,47 @@ void setup() {
   Serial.begin(115200);
   display.init();
   rtcManager.init();
+  //rtcManager.setFromTimestamp(1671066354);
   rtcUpdateRequest();
   clockhandler.onTick(tick);//Called Every Seconds
   clockhandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
   clockhandler.onRTCUpdateRequest(rtcUpdateRequest);
   initInputs();
-  initInterrupts();
-  DateTime dateTime = clockhandler.getCurrentDateTime();
-  displayTimeDate(&dateTime);
+  updateDisplay();
+}
+
+void onPushed(unsigned int button){
+  if (BT1 == button){//Add one second button
+    unsigned long ts = rtcManager.getTimestamp();
+    rtcManager.setFromTimestamp(ts + 1);
+    rtcUpdateRequest();
+  }else if (BT2 == button){//Add one second button
+    unsigned long ts = rtcManager.getTimestamp();
+    rtcManager.setFromTimestamp(ts - 1);
+    rtcUpdateRequest();
+  }
+}
+
+void onReleased(unsigned int button){
+ 
 }
 
 void loop() {
   clockhandler.loop(millis());
+  bool bt1 = digitalRead(BT1);
+  if (bt1 > 0 && BT1_PUSHED == false){
+    BT1_PUSHED = true;
+    onPushed(BT1);
+  }else if (bt1 < 1 && BT1_PUSHED == true) {
+    BT1_PUSHED = false;
+    onReleased(BT1);
+  }
+  bool bt2 = digitalRead(BT2);
+  if (bt2 > 0 && BT2_PUSHED == false){
+    BT2_PUSHED = true;
+    onPushed(BT2);
+  }else if (bt2 < 1 && BT2_PUSHED == true) {
+    BT2_PUSHED = false;
+    onReleased(BT2);
+  }
 }

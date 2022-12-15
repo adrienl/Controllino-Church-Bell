@@ -125,14 +125,24 @@ static unsigned int DateTimeTool::dayOfWeek(unsigned int y, unsigned int m, unsi
  * Public
  */
 
-static unsigned long DateTimeTool::dateTimeToTimestamp(DateTime * datetime){
+static unsigned long DateTimeTool::dateTimeToUTCTimestamp(DateTime * datetime){
   unsigned long ts;
-  unsigned long yearSecPast = secsPastFrom1970ToCurYear(datetime->getYear());
-  unsigned long monthSecPast = secsPastFromJanToLastMonth(datetime->getYear(), datetime->getMonth());
-  unsigned long daysSecPast = secsPastFromFirstDayOfMonthToCurDay(datetime->getDay());
-  unsigned long timeSecPast = secsPastFromMidnight(datetime->getHour(), datetime->getMinute(), datetime->getSecond());
-  ts = yearSecPast + monthSecPast + daysSecPast + timeSecPast - (datetime->getTimeShift() * 60);
+  unsigned int year = datetime->getYear();
+  unsigned char month = datetime->getMonth();
+  unsigned char day = datetime->getDay();
+  unsigned char hour = datetime->getHour();
+  unsigned char minute = datetime->getMinute();
+  unsigned char second = datetime->getSecond();
+  unsigned long yearSecPast = secsPastFrom1970ToCurYear(year);
+  unsigned long monthSecPast = secsPastFromJanToLastMonth(year, month);
+  unsigned long daysSecPast = secsPastFromFirstDayOfMonthToCurDay(day);
+  unsigned long timeSecPast = secsPastFromMidnight(hour, minute, second);
+  ts = yearSecPast + monthSecPast + daysSecPast + timeSecPast;
   return ts;
+}
+
+static unsigned long DateTimeTool::dateTimeToLocalTimestamp(DateTime * datetime){
+  return dateTimeToUTCTimestamp(datetime) + (datetime->getTimeShift() * 60);
 }
 
 static DateTime DateTimeTool::timestampToDateTime(unsigned long tsorigin){

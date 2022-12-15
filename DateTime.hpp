@@ -7,7 +7,6 @@ class DateTime {
 private:
     unsigned long   _timestamp;
     int             _timeShift; //In Minutes
-    unsigned char   _yearShort;
     unsigned int    _year;
     unsigned char   _month;
     unsigned char   _day;
@@ -22,7 +21,8 @@ public:
     DateTime(unsigned long ts, int timeShift);
     DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc);
     DateTime(unsigned int yr, unsigned char mo, unsigned char da, unsigned char hr, unsigned char mn, unsigned char sc, int timeShift);
-    unsigned long   getTimestamp();
+    unsigned long   getUTCTimestamp();
+    unsigned long   getLocalTimestamp();
     int             getTimeShift();
     unsigned char   getYearShort();
     unsigned int    getYear();

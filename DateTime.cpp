@@ -1,5 +1,4 @@
 #include "DateTime.hpp"
-
 #include <stdio.h>
 #include "DateTimeConst.h"
 #include "DateTimeTool.hpp"
@@ -37,14 +36,12 @@ DateTime::DateTime(unsigned int year, unsigned char month, unsigned char day, un
 }
 
 void DateTime::buildTimestamp(){
-  _timestamp = DateTimeTool::dateTimeToTimestamp(this);
+  _timestamp = DateTimeTool::dateTimeToUTCTimestamp(this);
 }
 
 void DateTime::buildDatetime(){
   unsigned long timestampzone = _timestamp + ((unsigned long)SEC_IN_MIN * _timeShift);
   DateTime datetime = DateTimeTool::timestampToDateTime(timestampzone);
-   
-  _yearShort =  datetime.getYear() - ((CURRENT_CENTURY - 1) * 100);
   _year = datetime.getYear();
   _month = datetime.getMonth();
   _day = datetime.getDay();
@@ -53,8 +50,12 @@ void DateTime::buildDatetime(){
   _second = datetime.getSecond();
 }
 
-unsigned long DateTime::getTimestamp(){
+unsigned long DateTime::getUTCTimestamp(){
   return _timestamp;
+}
+
+unsigned long DateTime::getLocalTimestamp(){
+  return _timestamp + (_timeShift * 60);
 }
 
 int DateTime::getTimeShift(){
@@ -62,7 +63,7 @@ int DateTime::getTimeShift(){
 }
 
 unsigned char DateTime::getYearShort(){
-  return _yearShort;
+  return _year - ((CURRENT_CENTURY - 1) * 100);
 }
 
 unsigned int DateTime::getYear(){

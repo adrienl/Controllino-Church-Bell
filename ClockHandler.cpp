@@ -21,8 +21,8 @@ void ClockHandler::setTimestamp(unsigned long timestamp){
 void ClockHandler::internalUpdateDSTOnYear(unsigned int year){
   DateTime dtDSTBegin = DateTimeTool::DSTBeginDatetime(year, _currentTimezone);
   DateTime dtDSTEnd = DateTimeTool::DSTEndDatetime(year, _currentTimezone);
-  _DSTTimestamps[0] = dtDSTBegin.getTimestamp();
-  _DSTTimestamps[1] = dtDSTEnd.getTimestamp();
+  _DSTTimestamps[0] = dtDSTBegin.getUTCTimestamp();
+  _DSTTimestamps[1] = dtDSTEnd.getUTCTimestamp();
 }
 
 void ClockHandler::updateDSTState(){
@@ -31,15 +31,15 @@ void ClockHandler::updateDSTState(){
     internalUpdateDSTOnYear(dt.getYear());
   }
   
-  if(dt.getTimestamp() < _DSTTimestamps[0]){
+  if(dt.getUTCTimestamp() < _DSTTimestamps[0]){
     _isDST = false;
     return;
   }
-  if (dt.getTimestamp() >= _DSTTimestamps[0] && dt.getTimestamp() < _DSTTimestamps[1]){
+  if (dt.getUTCTimestamp() >= _DSTTimestamps[0] && dt.getUTCTimestamp() < _DSTTimestamps[1]){
     _isDST = true;
     return;
   }
-  if (dt.getTimestamp() >= _DSTTimestamps[1]){
+  if (dt.getUTCTimestamp() >= _DSTTimestamps[1]){
     _isDST = false;
     internalUpdateDSTOnYear(dt.getYear() + 1);
   }

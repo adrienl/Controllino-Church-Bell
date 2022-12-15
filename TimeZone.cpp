@@ -1,6 +1,5 @@
 #include "TimeZone.hpp"
 
-#include <Arduino.h>
 #include <stdio.h>
 #include <string.h>
 

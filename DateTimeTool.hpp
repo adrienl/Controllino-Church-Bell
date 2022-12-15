@@ -14,11 +14,12 @@ private:
     static unsigned long secsPastFromMidnight(unsigned char h, unsigned char m, unsigned char s);
     static unsigned int leapYearsPastSince1970(unsigned int yearToCompare);
     static void getDayAndMonthFromPastdays(unsigned int currentYear, unsigned int pastdays, unsigned char * month, unsigned char * day);
-    static unsigned int dayOfWeek(unsigned int y, unsigned int m, unsigned int d);
     static bool getIsLeapYear(unsigned int year);
 public:
+    static unsigned int dayOfWeek(unsigned int y, unsigned int m, unsigned int d);
     static DateTime timestampToDateTime(unsigned long tsorigin);
-    static unsigned long dateTimeToTimestamp(DateTime * datetime);
+    static unsigned long dateTimeToUTCTimestamp(DateTime * datetime);
+    static unsigned long dateTimeToLocalTimestamp(DateTime * datetime);
     static unsigned char DSTTimeDayBegin(unsigned int y);
     static unsigned char DSTTimeDayEnd(unsigned int y);
     static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year, TimeZone tz);

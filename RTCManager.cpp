@@ -16,6 +16,19 @@ void RTCManager::setUTCTimeDate(unsigned char da, unsigned char we,unsigned char
   Controllino_SetTimeDate(da,we,mo,ye,ho,mi,se);  
 }
 
+void RTCManager::setFromTimestamp(unsigned long ts){
+  DateTime dt = DateTimeTool::timestampToDateTime(ts);
+  unsigned char day = dt.getDay();
+  unsigned char month = dt.getMonth();
+  unsigned char shortYear = dt.getYearShort();
+  unsigned int year = dt.getYear();
+  unsigned char hour = dt.getHour();
+  unsigned char minute = dt.getMinute();
+  unsigned char second = dt.getSecond();
+  unsigned int dayOfWeek = DateTimeTool::dayOfWeek(year, month, day);
+  Controllino_SetTimeDate(day, dayOfWeek, month, shortYear, hour, minute, second);  
+}
+
 char RTCManager::getDay(){
   return Controllino_GetDay();
 }
@@ -59,6 +72,6 @@ unsigned long RTCManager::getTimestamp(){
   );
  
   unsigned long ts;
-  ts = DateTimeTool::dateTimeToTimestamp(&datetime);
+  ts = DateTimeTool::dateTimeToUTCTimestamp(&datetime);
   return ts;
 }
