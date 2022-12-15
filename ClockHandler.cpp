@@ -1,5 +1,6 @@
 #include "ClockHandler.hpp"
 #include <time.h>
+#include <Arduino.h>
 #include "DateTimeTool.hpp"
 
 ClockHandler::ClockHandler() : _currentTimezone(TimeZone::buildUTC0Timezone()), _isDST(false), _DSTTimestamps({0, 0}) {
@@ -74,7 +75,8 @@ void ClockHandler::internalTick(){
   }
 }
 
-void ClockHandler::loop(unsigned long mls){
+void ClockHandler::loop(){
+  unsigned long mls = millis();
   if (mls != _lastmls){
     _lastmls = mls;
     if (mls % 1000 == 0){//Called every Seconds

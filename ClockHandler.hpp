@@ -26,7 +26,7 @@ public:
     ClockHandler(TimeZone timezone);
     void setTimestamp(unsigned long ts);
     void updateDSTState();
-    void loop(unsigned long mls);
+    void loop();
     void setRTCUpdateRequestFrequency(unsigned int freqMin);
     void onEverySeconds(void (*tickCall)(unsigned long ts));
     void onEveryMinutes(void (*tickCall)(unsigned long ts));

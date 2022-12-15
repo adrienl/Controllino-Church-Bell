@@ -4,25 +4,27 @@
 #include "Display.hpp"
 #include "RTCManager.hpp"
 #include "ClockHandler.hpp"
+#include "BellManager.hpp"
 
 //1648256390 2023 Summer time
 //1667005185 2023 Classik time
 
-#define BT1     CONTROLLINO_A2
-static bool     BT1_PUSHED = false;
-#define BT2     CONTROLLINO_A3
-static bool     BT2_PUSHED = false;
+#define BT1         CONTROLLINO_A2
+static bool         BT1_PUSHED = false;
+#define BT2         CONTROLLINO_A3
+static bool         BT2_PUSHED = false;
 #define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 #define DEFAULT_TIMEZONE 1
 
 Display display = Display::build2X16();
 RTCManager rtcManager = RTCManager();
 TimeZone tz = TimeZone::buildEuropeParisTimezone();
-ClockHandler clockhandler = ClockHandler(tz);
+ClockHandler clockHandler = ClockHandler(tz);
+BellManager bellManager = BellManager(CONTROLLINO_D0);
 
 void initInputs(){
-  pinMode(INPUT, BT1);
-  pinMode(INPUT, BT2);
+  pinMode(BT1, INPUT);
+  pinMode(BT2, INPUT);
 }
 
 unsigned long lastmls = 0;
@@ -41,7 +43,7 @@ void displayTime(DateTime * dateTimeObj){
 
 void displayTimeZone(){
   char dstName[5] = {0, 0, 0, 0, 0};
-  if (clockhandler.isDST()){
+  if (clockHandler.isDST()){
     tz.getRegionalShortDSTName(dstName, 5);
   }else{
     tz.getRegionalShortName(dstName, 5);
@@ -51,43 +53,45 @@ void displayTimeZone(){
 }
 
 void updateFullDisplay(){
-  DateTime dateTime = clockhandler.getCurrentDateTime();
+  DateTime dateTime = clockHandler.getCurrentDateTime();
   displayDate(&dateTime);
   displayTime(&dateTime);
   displayTimeZone();
 }
 
 void everyHours(unsigned long tmstp){
-  DateTime dateTime = clockhandler.getCurrentDateTime();
+  DateTime dateTime = clockHandler.getCurrentDateTime();
   displayDate(&dateTime);
   displayTimeZone();
 }
 
 void everyMinutes(unsigned long tmstp){
   //Check For Bell Rings;
+  bellManager.ring();
 }
 
 void everySeconds(unsigned long tmstp){
-  DateTime dateTime = clockhandler.getCurrentDateTime();
+  DateTime dateTime = clockHandler.getCurrentDateTime();
   displayTime(&dateTime);
 }
 
 void rtcUpdateRequest(){
   unsigned long ts = rtcManager.getTimestamp();
-  clockhandler.setTimestamp(ts);
+  clockHandler.setTimestamp(ts);
 }
 
 void setup() {
   Serial.begin(115200);
   display.init();
   rtcManager.init();
+  bellManager.init();
   //rtcManager.setFromTimestamp(1671143122);
   rtcUpdateRequest();
-  clockhandler.onEverySeconds(everySeconds);
-  clockhandler.onEveryMinutes(everyMinutes);
-  clockhandler.onEveryHours(everyHours);
-  clockhandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
-  clockhandler.onRTCUpdateRequest(rtcUpdateRequest);
+  clockHandler.onEverySeconds(everySeconds);
+  clockHandler.onEveryMinutes(everyMinutes);
+  clockHandler.onEveryHours(everyHours);
+  clockHandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
+  clockHandler.onRTCUpdateRequest(rtcUpdateRequest);
   initInputs();
   updateFullDisplay();
 }
@@ -109,7 +113,8 @@ void onReleased(unsigned int button){
 }
 
 void loop() {
-  clockhandler.loop(millis());
+  clockHandler.loop();
+  bellManager.loop();
   bool bt1 = digitalRead(BT1);
   //Serial.println(bt1);
   if (bt1 > 0 && BT1_PUSHED == false){
