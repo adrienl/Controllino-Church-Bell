@@ -56,15 +56,15 @@ void initInputs(){
 unsigned long lastmls = 0;
 
 void displayDate(DateTime * dateTimeObj){
-  char strDate[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillShortDateStringBuffer(strDate, 9);
+  char strDate[6] = {0, 0, 0, 0, 0, 0};
+  dateTimeObj->fillUltraShortDateStringBuffer(strDate, 6);
   display.printStringAt(0, 0, strDate);
 }
 
 void displayTime(DateTime * dateTimeObj){
-  char strTime[6] = {0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillShortTimeStringBuffer(strTime, 6);
-  display.printStringAt(9, 0, strTime);
+  char strTime[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  dateTimeObj->fillTimeStringBuffer(strTime, 9);
+  display.printStringAt(6, 0, strTime);
 }
 
 /*void displayTimeZone(){
@@ -113,7 +113,6 @@ void everyHours(unsigned long tmstp){
   DateTime dateTime = clockHandler.getCurrentDateTime();
   displayDate(&dateTime);
   //displayTimeZone();
-  bellManager.ring();
 }
 
 void everyMinutes(unsigned long tmstp){
@@ -205,6 +204,7 @@ void loop() {
   clockHandler.loop();
   bellManager.loop();
   bool bt1 = digitalRead(BT1);
+  //Serial.println(bt1);
   if (bt1 > 0 && BT1_PUSHED == false){
     BT1_PUSHED = true;
     onPushed(BT1);
