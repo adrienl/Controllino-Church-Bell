@@ -117,6 +117,7 @@ void updateFullDisplay(){
   DateTime dateTime = clockHandler.getCurrentDateTime();
   displayDate(&dateTime);
   displayTime(&dateTime);
+  displayNextEvent();
   //displayTimeZone();
 }
 
@@ -242,9 +243,8 @@ void setup() {
   clockHandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
   clockHandler.onRTCUpdateRequest(updateMCUClockFromRTC);
   initInputs();
-  updateFullDisplay();
   setNextEventScheduled(0);
-  displayNextEvent();
+  updateFullDisplay();
 }
 
 void loop() {
