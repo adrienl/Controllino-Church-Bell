@@ -3,13 +3,13 @@
 #include <Arduino.h>
 #include "DateTimeTool.hpp"
 
-ClockHandler::ClockHandler() : _currentTimezone(TimeZone::buildUTC0Timezone()), _isDST(false), _DSTTimestamps({0, 0}) {
+ClockHandler::ClockHandler() : _currentTimezone(TimeZone::buildUTC0Timezone()), _isDST(false), _DSTTimestamps({0, 0}), _isCountingDown(false) {
   _timestamp = 0;
   _lastmls = 0;
   _updateRTCRequestFreqMin = 60;//Default every 60 minutes
 }
 
-ClockHandler::ClockHandler(TimeZone timezone) : _currentTimezone(timezone), _isDST(false), _DSTTimestamps({0, 0}){
+ClockHandler::ClockHandler(TimeZone timezone) : _currentTimezone(timezone), _isDST(false), _DSTTimestamps({0, 0}), _isCountingDown(false){
   _timestamp = 0;
   _lastmls = 0;
   _updateRTCRequestFreqMin = 60;//Default every 60 minutes
@@ -17,6 +17,10 @@ ClockHandler::ClockHandler(TimeZone timezone) : _currentTimezone(timezone), _isD
 
 void ClockHandler::setTimestamp(unsigned long timestamp){
   _timestamp = timestamp;
+}
+
+void ClockHandler::onCountDownTriggered(void (*countdownFunc)()){
+  _countdownFunc = countdownFunc;
 }
 
 void ClockHandler::internalUpdateDSTOnYear(unsigned int year){
@@ -62,6 +66,15 @@ void ClockHandler::internalEachHour(){
 }
 
 void ClockHandler::internalTick(){
+  if (_isCountingDown && _countDownSec > 0){
+    _countDownSec--;
+  }else if (_isCountingDown && _countDownSec <= 0){
+    _countDownSec = 0;
+    _isCountingDown = false;
+    if (_countdownFunc != NULL){
+      _countdownFunc();  
+    }
+  }
   if (_timestamp % (_updateRTCRequestFreqMin * 60) == 0){
     _rtcUpdateRequestFunc();
   }
@@ -85,6 +98,11 @@ void ClockHandler::loop(){
       _everySecondsFunc(_timestamp);
     }
   }
+}
+
+void ClockHandler::startCountdown(unsigned long ts){
+  _countDownSec = ts;
+  _isCountingDown = true;
 }
 
 void ClockHandler::onEverySeconds(void (*fnc)(unsigned long)){

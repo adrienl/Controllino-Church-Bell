@@ -31,9 +31,12 @@ public:
     unsigned char   getHour();
     unsigned char   getMinute();
     unsigned char   getSecond();
+    unsigned int    getWeekDay();
+    DateTime        getNextDay();
     
     void fillTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
     void fillShortTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 6 bytes;
     void fillDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
     void fillShortDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 11 bytes;
+    void fillUltraShortDateStringBuffer(char * buff, unsigned char len); //Prepare a buffer 8 bytes;
 };

@@ -13,7 +13,7 @@ Written on Arduino IDE 1.8.19
 - ⭕️ Adjust Date
 - ✅ Manage Timezone
 - ✅ Manage Daylight Saving Time
-- ⭕️ Manage Ringing Schedule
+- ✅ Manage Ringing Schedule
 - 🟠 Manage Ringing Sequence
 - ⭕️ Display Next Action
 

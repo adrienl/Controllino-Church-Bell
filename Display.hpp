@@ -14,7 +14,7 @@ public:
     int x;
     Display(unsigned char lines, unsigned char rows);
     void clearAt(unsigned char t, unsigned char y, unsigned char len);
-    void printCharAt(unsigned char t, unsigned char y, unsigned char ch);
+    void printCharAt(unsigned char t, unsigned char y, char ch);
     void printStringAt(unsigned char x, unsigned char y, char * str);
     void init();
     static Display build2X16() {

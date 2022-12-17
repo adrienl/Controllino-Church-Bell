@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "DateTimeConst.h"
 #include "DateTimeTool.hpp"
+#include <Arduino.h>
 
 #define CURRENT_CENTURY 21
 
@@ -90,6 +91,14 @@ unsigned char DateTime::getSecond(){
   return _second;
 }
 
+unsigned int DateTime::getWeekDay(){
+  return DateTimeTool::dayOfWeek(_year, _month, _day);
+}
+
+DateTime DateTime::getNextDay(){
+  return DateTime(_timestamp + SEC_IN_DAY, _timeShift);
+}
+
 void DateTime::fillTimeStringBuffer(char * buff, unsigned char len){
   snprintf(buff, len, "%02d:%02d:%02d\0", getHour(), getMinute(), getSecond());
 }
@@ -104,4 +113,8 @@ void DateTime::fillDateStringBuffer(char * buff, unsigned char len){
 
 void DateTime::fillShortDateStringBuffer(char * buff, unsigned char len){
   snprintf(buff, len, "%02d/%02d/%02d\0", getDay(), getMonth(), getYearShort());
+}
+
+void DateTime::fillUltraShortDateStringBuffer(char * buff, unsigned char len){
+  snprintf(buff, len, "%02d/%02d\0", getDay(), getMonth());
 }

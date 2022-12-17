@@ -23,7 +23,7 @@ void Display::clearAt(unsigned char x, unsigned char y, unsigned char len){
   _lcd.print(str);
 }
 
-void Display::printCharAt(unsigned char x, unsigned char y, unsigned char c) {
+void Display::printCharAt(unsigned char x, unsigned char y, char c) {
   char ch[2] = {c, 0};
   _lcd.setCursor(x, y);
   _lcd.print(ch);
