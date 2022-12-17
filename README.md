@@ -15,7 +15,7 @@ Written on Arduino IDE 1.8.19
 - ✅ Manage Daylight Saving Time
 - ✅ Manage Ringing Schedule
 - 🟠 Manage Ringing Sequence
-- ⭕️ Display Next Action
+- ✅ Display Next Action
 
 ## Hardware
 
