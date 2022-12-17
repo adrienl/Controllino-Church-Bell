@@ -12,4 +12,5 @@ public:
     Event(String title, DateTime dt);
     DateTime getDateTime();
     String getTitle();
+    unsigned long getUTCTimestamp();
 };

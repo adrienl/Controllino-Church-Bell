@@ -16,5 +16,6 @@ class Schedule {
     Schedule(String title, unsigned char hour, unsigned char minute);
     unsigned char nextDaysCount(DateTime nowDT);
     DateTime getScheduleDatetime(DateTime nowDT);
+    unsigned long getScheduleTimestamp(DateTime nowDT);
     String getTitle();
 };

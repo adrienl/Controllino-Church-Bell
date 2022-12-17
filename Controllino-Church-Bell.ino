@@ -24,7 +24,7 @@ TimeZone tz = TimeZone::buildEuropeParisTimezone();
 ClockHandler clockHandler = ClockHandler(tz);
 BellManager bellManager = BellManager(CONTROLLINO_D0);
 
-Event * _nextEvent = NULL;
+Event     * _nextEvent = NULL;
 
 //Church clock events  
 Schedule schedules[] = {
@@ -48,12 +48,30 @@ Schedule schedules[] = {
   Schedule("Simple", 20, 45),
 };
 
+unsigned long lastmls = 0;
+
+/* Others calls */
+
 void initInputs(){
   pinMode(BT1, INPUT);
   pinMode(BT2, INPUT);
 }
 
-unsigned long lastmls = 0;
+void updateMCUClockFromRTC(){
+  unsigned long ts = rtcManager.getTimestamp();
+  clockHandler.setTimestamp(ts);
+}
+
+void triggerEvent(){
+  Serial.println("Dring !");
+  bellManager.ring();
+  setNextEventScheduled(1);
+  displayNextEvent();
+}
+
+/* ----------------------- */
+
+/* Display Updates */
 
 void displayDate(DateTime * dateTimeObj){
   char strDate[6] = {0, 0, 0, 0, 0, 0};
@@ -102,12 +120,9 @@ void updateFullDisplay(){
   //displayTimeZone();
 }
 
-void countDownEnding(){
-  Serial.println("Dring !");
-  bellManager.ring();
-  setNextEventScheduled();
-  displayNextEvent();
-}
+/* ------------------- */
+
+/* ------- Called Every Hour */
 
 void everyHours(unsigned long tmstp){
   DateTime dateTime = clockHandler.getCurrentDateTime();
@@ -115,84 +130,77 @@ void everyHours(unsigned long tmstp){
   //displayTimeZone();
 }
 
-void everyMinutes(unsigned long tmstp){
-  //Check For Bell Rings;
+/* ------------------- */
+
+/* ------- Called Every Minutes */
+
+void checkEvent(){
+  if (_nextEvent == NULL) { return; }
+  DateTime dateTime = clockHandler.getCurrentDateTime();
+  if (_nextEvent->getUTCTimestamp() == dateTime.getUTCTimestamp()){
+    triggerEvent();
+  }
 }
+
+void everyMinutes(unsigned long tmstp){
+  checkEvent();
+}
+
+/* ----------------------------- */
+
+/* ------- Called Every Seconds */
 
 void everySeconds(unsigned long tmstp){
   DateTime dateTime = clockHandler.getCurrentDateTime();
   displayTime(&dateTime);
 }
 
-void rtcUpdateRequest(){
-  unsigned long ts = rtcManager.getTimestamp();
-  clockHandler.setTimestamp(ts);
-}
+/* ----------------------------- */
+
+/* -- Event Updates -- */
 
 void replaceWithNewEvent(Event * event){
   if (_nextEvent != NULL){
     delete _nextEvent;
-    _nextEvent = NULL;
   }
   _nextEvent = event;
 }
 
-unsigned long getTimestampFromSchedule(DateTime curDT, Schedule * s){
-    DateTime dt = s->getScheduleDatetime(curDT);
-    return dt.getUTCTimestamp();
-}
-
-void setNextEventScheduled(){
+void setNextEventScheduled(unsigned char timeShiftSec){
   int nbItems = sizeof(schedules)/sizeof(Schedule);
   if (nbItems < 1){
     return;  
   }
   int i = 1;
-  DateTime dateTime = clockHandler.getCurrentDateTime();
-  unsigned long ts = getTimestampFromSchedule(dateTime, &(schedules[0]));
+  DateTime currentDT = clockHandler.getCurrentDateTime();
+  DateTime nextDT = DateTime(currentDT.getUTCTimestamp() + timeShiftSec, currentDT.getTimeShift());
+  unsigned long ts = schedules[0].getScheduleTimestamp(nextDT);
   Schedule * eventSchedule = &(schedules[0]);
   while (i < nbItems){
-    unsigned long nTS = getTimestampFromSchedule(dateTime, &(schedules[i]));
+    unsigned long nTS = schedules[i].getScheduleTimestamp(nextDT);
     if (nTS < ts){
       eventSchedule = &schedules[i];
       ts = nTS;
     }
     i++;
   }
-  DateTime eventDT = eventSchedule->getScheduleDatetime(dateTime);
+  DateTime eventDT = eventSchedule->getScheduleDatetime(nextDT);
   replaceWithNewEvent(new Event(eventSchedule->getTitle(), eventDT));
-  unsigned long countDownSec = eventDT.getUTCTimestamp() - dateTime.getUTCTimestamp();
-  clockHandler.startCountdown(countDownSec);
 }
 
-void setup() {
-  Serial.begin(115200);
-  display.init();
-  rtcManager.init();
-  bellManager.init();
-  //rtcManager.setFromTimestamp(1671143122);
-  rtcUpdateRequest();
-  clockHandler.onEverySeconds(everySeconds);
-  clockHandler.onEveryMinutes(everyMinutes);
-  clockHandler.onEveryHours(everyHours);
-  clockHandler.onCountDownTriggered(countDownEnding);
-  clockHandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
-  clockHandler.onRTCUpdateRequest(rtcUpdateRequest);
-  initInputs();
-  updateFullDisplay();
-  setNextEventScheduled();
-  displayNextEvent();
-}
+/* -------------------- */
+
+/* -- BUTTONS CALLS -- */
 
 void onPushed(unsigned int button){
   if (BT1 == button){//Add one second button
     unsigned long ts = rtcManager.getTimestamp();
     rtcManager.setFromTimestamp(ts + 1);
-    rtcUpdateRequest();
+    updateMCUClockFromRTC();
   }else if (BT2 == button){//Add one second button
     unsigned long ts = rtcManager.getTimestamp();
     rtcManager.setFromTimestamp(ts - 1);
-    rtcUpdateRequest();
+    updateMCUClockFromRTC();
   }
 }
 
@@ -200,11 +208,8 @@ void onReleased(unsigned int button){
   
 }
 
-void loop() {
-  clockHandler.loop();
-  bellManager.loop();
+void checkButtonsCalls(){
   bool bt1 = digitalRead(BT1);
-  //Serial.println(bt1);
   if (bt1 > 0 && BT1_PUSHED == false){
     BT1_PUSHED = true;
     onPushed(BT1);
@@ -220,4 +225,30 @@ void loop() {
     BT2_PUSHED = false;
     onReleased(BT2);
   }
+}
+
+/* -------------------------- */
+
+void setup() {
+  Serial.begin(115200);
+  display.init();
+  rtcManager.init();
+  bellManager.init();
+  //rtcManager.setFromTimestamp(1671143122);
+  updateMCUClockFromRTC();
+  clockHandler.onEverySeconds(everySeconds);
+  clockHandler.onEveryMinutes(everyMinutes);
+  clockHandler.onEveryHours(everyHours);
+  clockHandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
+  clockHandler.onRTCUpdateRequest(updateMCUClockFromRTC);
+  initInputs();
+  updateFullDisplay();
+  setNextEventScheduled(0);
+  displayNextEvent();
+}
+
+void loop() {
+  clockHandler.loop();
+  bellManager.loop();
+  checkButtonsCalls();
 }

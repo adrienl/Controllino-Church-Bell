@@ -93,3 +93,8 @@ DateTime Schedule::getScheduleDatetime(DateTime nowDT){
   }
   return scheduledDT;
 }
+
+unsigned long Schedule::getScheduleTimestamp(DateTime nowDT){
+  DateTime dt = getScheduleDatetime(nowDT);
+  return dt.getUTCTimestamp();
+}
