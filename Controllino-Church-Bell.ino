@@ -93,9 +93,9 @@ void displayDate(DateTime * dateTimeObj){
 }
 
 void displayTime(DateTime * dateTimeObj){
-  char strTime[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillTimeStringBuffer(strTime, 9);
-  display.printStringAt(6, 0, strTime);
+  char strTime[6] = {0, 0, 0, 0, 0, 0};
+  dateTimeObj->fillShortTimeStringBuffer(strTime, 6);
+  display.printStringAt(11, 0, strTime);
 }
 
 /*void displayTimeZone(){
@@ -123,8 +123,8 @@ void displayNextBellEvent(){
     unsigned char hour = dt.getHour();
     unsigned char minute = dt.getMinute();
     char dateBuff[6] = {0, 0, 0, 0, 0, 0};
-    snprintf(dateBuff, 6, "%02d:%02d\0", hour, minute);
-    display.printStringAt(len + 1, 1, dateBuff);
+    snprintf(dateBuff, 6, "%02d:%02d:00\0", hour, minute);
+    display.printStringAt(11, 1, dateBuff);
   }
 }
 
@@ -159,6 +159,8 @@ void checkBellEvent(){
 }
 
 void everyMinutes(unsigned long tmstp){
+  DateTime dateTime = clockHandler.getCurrentDateTime();
+  displayTime(&dateTime);
   checkBellEvent();
 }
 
@@ -167,8 +169,8 @@ void everyMinutes(unsigned long tmstp){
 /* ------- Called Every Seconds */
 
 void everySeconds(unsigned long tmstp){
-  DateTime dateTime = clockHandler.getCurrentDateTime();
-  displayTime(&dateTime);
+  /*DateTime dateTime = clockHandler.getCurrentDateTime();
+  displayTime(&dateTime);*/
 }
 
 /* ----------------------------- */
