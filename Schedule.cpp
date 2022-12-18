@@ -1,13 +1,13 @@
 #include "Schedule.hpp"
 #include <Arduino.h>
 
-Schedule::Schedule(String title, unsigned char hour, unsigned char minute, ScheduleWeekDay weekDays) :
-  _title(title), _hour(hour), _minute(minute), _weekDays(weekDays){
+Schedule::Schedule(E_EventType eventType, unsigned char hour, unsigned char minute, ScheduleWeekDay weekDays) :
+  _eventType(eventType), _hour(hour), _minute(minute), _weekDays(weekDays){
   
 }
 
-Schedule::Schedule(String title, unsigned char hour, unsigned char minute) :
-  _title(title), _hour(hour), _minute(minute), _weekDays(ScheduleWeekDay(1, 1, 1, 1, 1, 1, 1)){
+Schedule::Schedule(E_EventType eventType, unsigned char hour, unsigned char minute) :
+  _eventType(eventType), _hour(hour), _minute(minute), _weekDays(ScheduleWeekDay(1, 1, 1, 1, 1, 1, 1)){
     
 }
 
@@ -19,8 +19,8 @@ DateTime Schedule::datetimeWithScheduledTime(DateTime dt){
   return DateTime(nYear, nMon, nDay, _hour, _minute, 0, nShift);
 }
 
-String Schedule::getTitle(){
-  return _title;
+E_EventType Schedule::getEventType(){
+  return _eventType;
 }
 
 bool Schedule::timeIsOver(DateTime dt){
@@ -37,7 +37,9 @@ bool Schedule::timeIsOver(DateTime dt){
 int mypow(int base, int exponent){
   int i = 1;
   int result = base;
-  if (exponent < 1){ return 0; }
+  if (base < 0 && exponent == 0) {return -1;}
+  if (base >= 0 && exponent == 0) {return 1;}
+  if (exponent == 1){return base;}
   while (i < exponent){
     result *= base; 
     i++;
@@ -76,7 +78,7 @@ unsigned char Schedule::nextDaysCount(DateTime dt){
 }
 
 DateTime Schedule::getScheduleDatetime(DateTime nowDT){
-  unsigned int i = 0;
+  unsigned int i;
   unsigned int days = 0;
   DateTime scheduledDT = DateTime(1970, 1, 1, 0, 0, 0);
   if (timeIsOver(nowDT)){

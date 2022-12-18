@@ -1,6 +1,6 @@
 #include "Event.hpp"
 
-Event::Event(String title, DateTime dt) : _title(title), _datetime(dt){
+Event::Event(E_EventType et, DateTime dt) : _eventType(et), _datetime(dt){
   
 }
 
@@ -12,6 +12,6 @@ unsigned long Event::getUTCTimestamp(){
   return _datetime.getUTCTimestamp();
 }
 
-String Event::getTitle(){
-  return _title;  
+E_EventType Event::getEventType(){
+  return _eventType;  
 }

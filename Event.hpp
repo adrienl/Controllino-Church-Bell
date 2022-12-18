@@ -2,15 +2,17 @@
 
 #include <Arduino.h>
 #include "DateTime.hpp"
+#include "Const.h"
 
 class Event {
 
 private:
-    DateTime _datetime;
-    String _title;
+    DateTime    _datetime;
+    E_EventType _eventType;
+    bool        _isInternal;
 public:
-    Event(String title, DateTime dt);
+    Event(E_EventType eventType, DateTime dt);
     DateTime getDateTime();
-    String getTitle();
+    E_EventType getEventType();
     unsigned long getUTCTimestamp();
 };
