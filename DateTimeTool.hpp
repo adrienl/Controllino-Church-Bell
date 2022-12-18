@@ -2,7 +2,7 @@
 #define __DATETIMETOOL_
 
 #include <stdbool.h>
-#include "DateTimeConst.h"
+#include "Const.h"
 #include "DateTime.hpp"
 #include "Timezone.hpp"
 

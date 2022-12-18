@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "DateTime.hpp"
-#include "DateTimeConst.h"
+#include "Const.h"
 
 /*
  * Private

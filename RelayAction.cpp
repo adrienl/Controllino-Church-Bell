@@ -61,21 +61,21 @@ void RelayAction::setOffTiming(unsigned int timing){
 static RelayAction * RelayAction::buildAngelusActions(){
   RelayAction * act11 = buildTripleAction();
   RelayAction * act13 = act11->getLastOfTheList();
-  act13->setOffTiming(3000);
+  act13->setOffTiming(14000);
 
   RelayAction * act21 = buildTripleAction();
   act21->setPreviousAction(act13);
   act13->setNextAction(act21);
   RelayAction * act23 = act21->getLastOfTheList();
-  act23->setOffTiming(3000);
+  act23->setOffTiming(14000);
 
   RelayAction * act31 = buildTripleAction();
   act31->setPreviousAction(act23);
   act23->setNextAction(act31);
   RelayAction * act33 = act31->getLastOfTheList();
-  act33->setOffTiming(3000);
+  act33->setOffTiming(15000);
 
-  RelayAction * v = RelayAction::buildAnyActions(5);
+  RelayAction * v = RelayAction::buildAnyActions(10);
   act33->setNextAction(v);
   v->setPreviousAction(act33);
   v->getLastOfTheList()->setOffTiming(200);
