@@ -28,6 +28,13 @@ Written on Arduino IDE 1.8.19
 - Set the RTC Switch ON
 - Upload the code
 
+## Inputs / Outputs
+
+- Input A0 (12V > Push Button > A0) : Button Decrease Seconds
+- Input A1 (12V > Push Button > A1) : Button Increase Seconds
+- Input A2 (12V > Push Button > A2) : Button to Ring the bell once
+- Output D0 (230V > COM_D0_D1 > D0 > Bell) : Connected to the Bell
+
 ## Display
 
-- On Pin Header : SCL/SDA/5V/GND
+- Pin Header : SCL/SDA/5V/GND
