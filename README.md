@@ -31,4 +31,3 @@ Written on Arduino IDE 1.8.19
 ## Display
 
 - On Pin Header : SCL/SDA/5V/GND
->>>>>>> develop
