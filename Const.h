@@ -29,9 +29,10 @@ const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 
 const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 typedef enum E_EventType {
-  EET_Simple = 10,
-  EET_Triple = 20,
-  EET_Angelus = 30
+  EET_Simple,
+  EET_Triple,
+  EET_Five,
+  EET_Angelus
 } E_EventType;
 
 #endif

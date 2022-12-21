@@ -12,11 +12,14 @@
 //1648256390 2023 Summer time
 //1667005185 2023 Classik time
 
+#define NB_INPUT 4
+
 #define BT_SEC_PLUS   CONTROLLINO_A0
 #define BT_SEC_MINUS  CONTROLLINO_A1
 #define BT_ONE_PULSE  CONTROLLINO_A2
-static unsigned char bts[3] = {BT_SEC_PLUS, BT_SEC_MINUS, BT_ONE_PULSE};
-static bool bts_pushed[3] = {false, false, false};
+#define BT_ANGELUS  CONTROLLINO_A3
+static unsigned char bts[NB_INPUT] = {BT_SEC_PLUS, BT_SEC_MINUS, BT_ONE_PULSE, BT_ANGELUS};
+static bool bts_pushed[NB_INPUT] = {false, false, false, false};
 #define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 
 Display display = Display::build2X16();
@@ -33,19 +36,19 @@ Schedule bellSchedules[] = {
   Schedule(EET_Simple, 7, 0, ScheduleWeekDay(1, 0, 1, 0, 0, 0, 1)),
   Schedule(EET_Angelus, 7, 10, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
   Schedule(EET_Angelus, 7, 40, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
-  Schedule(EET_Triple, 8, 25, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
+  Schedule(EET_Five, 8, 25, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
   Schedule(EET_Simple, 8, 30, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
-  Schedule(EET_Triple, 11, 25, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
+  Schedule(EET_Five, 11, 25, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
   Schedule(EET_Simple, 11, 30, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
-  Schedule(EET_Triple, 12, 10),
+  Schedule(EET_Five, 12, 10),
   Schedule(EET_Simple, 12, 15),
   Schedule(EET_Angelus, 12, 25),
-  Schedule(EET_Triple, 17, 40, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
+  Schedule(EET_Five, 17, 40, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
   Schedule(EET_Simple, 17, 45, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
-  Schedule(EET_Triple, 17, 55, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
+  Schedule(EET_Five, 17, 55, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
   Schedule(EET_Simple, 18, 0, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
   Schedule(EET_Simple, 18, 30),
-  Schedule(EET_Triple, 20, 40),
+  Schedule(EET_Five, 20, 40),
   Schedule(EET_Simple, 20, 45),
 };
 
@@ -55,6 +58,7 @@ unsigned long lastmls = 0;
 
 void initInputs(){
   pinMode(BT_ONE_PULSE, INPUT);
+  pinMode(BT_ANGELUS, INPUT);
   pinMode(BT_SEC_PLUS, INPUT);
   pinMode(BT_SEC_MINUS, INPUT);
   pinMode(CONTROLLINO_D0, OUTPUT);
@@ -69,6 +73,7 @@ void startBell(E_EventType event){
   RelayAction * act = NULL;
   if (event == EET_Angelus){act = RelayAction::buildAngelusActions();}
   else if (event == EET_Triple){act = RelayAction::buildTripleAction();}
+  else if (event == EET_Five){act = RelayAction::buildFiveAction();}
   else if (event == EET_Simple){act = RelayAction::buildSimpleAction();}
   if (act != NULL && relayManager.startFromAction(act) == false){
     RelayAction::deleteAllNodes(act);
@@ -115,6 +120,7 @@ void displayNextBellEvent(){
     E_EventType eventType = _nextBellEvent->getEventType();
     if (eventType == EET_Simple){strcpy(title, "Simple\0");}
     if (eventType == EET_Triple){strcpy(title, "Triple\0");}
+    if (eventType == EET_Five){strcpy(title, "Cinq\0");}
     if (eventType == EET_Angelus){strcpy(title, "Angelus\0");}
     unsigned int len = strlen(title);
     display.clearAt(0, 1, 16);
@@ -169,6 +175,7 @@ void everyMinutes(unsigned long tmstp){
 /* ------- Called Every Seconds */
 
 void everySeconds(unsigned long tmstp){
+  Serial.println("tick");
   /*DateTime dateTime = clockHandler.getCurrentDateTime();
   displayTime(&dateTime);*/
 }
@@ -217,6 +224,7 @@ void setNextBellEventScheduled(unsigned char timeShiftSec){
 /* -- BUTTONS CALLS -- */
 
 void onPushed(unsigned int button){
+  Serial.println(button);
   if (BT_SEC_PLUS == button){//Add one second button
     unsigned long ts = rtcManager.getTimestamp();
     rtcManager.setFromTimestamp(ts + 1);
@@ -225,8 +233,11 @@ void onPushed(unsigned int button){
     unsigned long ts = rtcManager.getTimestamp();
     rtcManager.setFromTimestamp(ts - 1);
     updateMCUClockFromRTC();
-  }else if(BT_ONE_PULSE){
+  }else if(BT_ONE_PULSE == button){
     startBell(EET_Simple);
+  }else if(BT_ANGELUS == button){
+  Serial.println("Angelus");
+    startBell(EET_Angelus);
   }
 }
 
@@ -235,7 +246,7 @@ void onReleased(unsigned int button){
 }
 
 void checkButtonsCalls(){
-  for (unsigned char i = 0; i < 3; i++){
+  for (unsigned char i = 0; i < NB_INPUT; i++){
     bool bt = digitalRead(bts[i]);  
     if (bt > 0 && bts_pushed[i] == false){
       bts_pushed[i] = true;

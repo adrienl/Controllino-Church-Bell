@@ -59,17 +59,17 @@ void RelayAction::setOffTiming(unsigned int timing){
 /* Static */
 
 static RelayAction * RelayAction::buildAngelusActions(){
-  RelayAction * act11 = buildTripleAction();
+  RelayAction * act11 = RelayAction::buildAnyActions(3);
   RelayAction * act13 = act11->getLastOfTheList();
   act13->setOffTiming(14000);
 
-  RelayAction * act21 = buildTripleAction();
+  RelayAction * act21 = RelayAction::buildAnyActions(3);
   act21->setPreviousAction(act13);
   act13->setNextAction(act21);
   RelayAction * act23 = act21->getLastOfTheList();
   act23->setOffTiming(14000);
 
-  RelayAction * act31 = buildTripleAction();
+  RelayAction * act31 = RelayAction::buildAnyActions(3);
   act31->setPreviousAction(act23);
   act23->setNextAction(act31);
   RelayAction * act33 = act31->getLastOfTheList();
@@ -95,10 +95,10 @@ static void RelayAction::deleteAllNodes(RelayAction * act){
 static RelayAction * RelayAction::buildAnyActions(unsigned int len){
   int i = 1;
   if (len == 0){return NULL;}
-  RelayAction * lastAction = new RelayAction(CONTROLLINO_D0, BELL_TIMING, 900);
+  RelayAction * lastAction = new RelayAction(CONTROLLINO_D0, BELL_TIMING, 2000);
   lastAction->setPreviousAction(NULL);
   while (i < len){
-    RelayAction * act = new RelayAction(CONTROLLINO_D0, BELL_TIMING, 900);
+    RelayAction * act = new RelayAction(CONTROLLINO_D0, BELL_TIMING, 2000);
     lastAction->setNextAction(act);
     act->setPreviousAction(lastAction);
     act->setNextAction(NULL);
@@ -117,6 +117,12 @@ static RelayAction * RelayAction::buildSimpleAction(){
 
 static RelayAction * RelayAction::buildTripleAction(){
   RelayAction * act = RelayAction::buildAnyActions(3);
+  act->getLastOfTheList()->setOffTiming(200);
+  return act;
+}
+
+static RelayAction * RelayAction::buildFiveAction(){
+  RelayAction * act = RelayAction::buildAnyActions(5);
   act->getLastOfTheList()->setOffTiming(200);
   return act;
 }

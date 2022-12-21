@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Controllino.h>
-#define BELL_TIMING 100
+#define BELL_TIMING 80
 
 class RelayAction{
   private:
@@ -26,6 +26,7 @@ class RelayAction{
     static RelayAction * buildAngelusActions();
     static RelayAction * buildSimpleAction();
     static RelayAction * buildTripleAction();
+    static RelayAction * buildFiveAction();
     static RelayAction * buildAnyActions(unsigned int len);
     static void deleteAllNodes(RelayAction * act);
     static void print(RelayAction * act);
