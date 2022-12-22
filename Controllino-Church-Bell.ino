@@ -9,8 +9,28 @@
 #include "Event.hpp"
 #include "RelayManager.hpp"
 
-//1648256390 2023 Summer time
-//1667005185 2023 Classik time
+//Bell events you can add, remove or modify.
+Schedule bellSchedules[] = {
+  Schedule(EET_Simple, 6, 30, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),  // > Ring the Bell once at 6:30 AM every Monday, Wednesday, Thursday and Friday
+  Schedule(EET_Simple, 7, 0, ScheduleWeekDay(1, 0, 1, 0, 0, 0, 1)),   // > Ring the Bell once at 7:00 AM every Thuesday, Daturday and Sunday
+  Schedule(EET_Angelus, 7, 10, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)), // > Ring the Angelus at 7:10 AM every Monday, Wednesday, Thursday and Friday
+  Schedule(EET_Angelus, 7, 40, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)), // > Ring the Angelus at 7:40 AM every Thuesday and Saturday
+  Schedule(EET_Five, 8, 25, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),    // > Ring the Bell five time at 8:25 AM on Sunday
+  Schedule(EET_Simple, 8, 30, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),  // > Ring the Bell once at 8:30 AM on Sunday
+  Schedule(EET_Five, 11, 25, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),   // > Ring the Bell five time at 11:25 AM on Thuesday and Saturday
+  Schedule(EET_Simple, 11, 30, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)), // > Ring the Bell once at 11:30 AM on Thuesday and Saturday
+  Schedule(EET_Five, 12, 10),                                         // > Ring the Bell five time at 12:10 PM every day
+  Schedule(EET_Simple, 12, 15),                                       // > ...
+  Schedule(EET_Angelus, 12, 25),                                      // > ..
+  Schedule(EET_Five, 17, 40, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),   // > .
+  Schedule(EET_Simple, 17, 45, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
+  Schedule(EET_Five, 17, 55, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
+  Schedule(EET_Simple, 18, 0, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
+  Schedule(EET_Simple, 18, 30),
+  Schedule(EET_Five, 20, 40),
+  Schedule(EET_Simple, 20, 45),
+  // Like the Schedule lines above, add any additional Schedule lines here.
+};
 
 #define NB_INPUT 4
 
@@ -30,39 +50,7 @@ RelayManager relayManager = RelayManager();
 
 Event     * _nextBellEvent = NULL;
 
-//Church clock events  
-Schedule bellSchedules[] = {
-  Schedule(EET_Simple, 6, 30, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
-  Schedule(EET_Simple, 7, 0, ScheduleWeekDay(1, 0, 1, 0, 0, 0, 1)),
-  Schedule(EET_Angelus, 7, 10, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
-  Schedule(EET_Angelus, 7, 40, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
-  Schedule(EET_Five, 8, 25, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
-  Schedule(EET_Simple, 8, 30, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
-  Schedule(EET_Five, 11, 25, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
-  Schedule(EET_Simple, 11, 30, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
-  Schedule(EET_Five, 12, 10),
-  Schedule(EET_Simple, 12, 15),
-  Schedule(EET_Angelus, 12, 25),
-  Schedule(EET_Five, 17, 40, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
-  Schedule(EET_Simple, 17, 45, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
-  Schedule(EET_Five, 17, 55, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
-  Schedule(EET_Simple, 18, 0, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
-  Schedule(EET_Simple, 18, 30),
-  Schedule(EET_Five, 20, 40),
-  Schedule(EET_Simple, 20, 45),
-};
-
-unsigned long lastmls = 0;
-
 /* Others calls */
-
-void initInputs(){
-  pinMode(BT_ONE_PULSE, INPUT);
-  pinMode(BT_ANGELUS, INPUT);
-  pinMode(BT_SEC_PLUS, INPUT);
-  pinMode(BT_SEC_MINUS, INPUT);
-  pinMode(CONTROLLINO_D0, OUTPUT);
-}
 
 void updateMCUClockFromRTC(){
   unsigned long ts = rtcManager.getTimestamp();
@@ -81,7 +69,6 @@ void startBell(E_EventType event){
 }
 
 void triggerEvent(E_EventType event){
-  Serial.println("Dring !");
   startBell(event);
   setNextBellEventScheduled(1);
   displayNextBellEvent();
@@ -175,7 +162,6 @@ void everyMinutes(unsigned long tmstp){
 /* ------- Called Every Seconds */
 
 void everySeconds(unsigned long tmstp){
-  Serial.println("tick");
   /*DateTime dateTime = clockHandler.getCurrentDateTime();
   displayTime(&dateTime);*/
 }
@@ -224,7 +210,6 @@ void setNextBellEventScheduled(unsigned char timeShiftSec){
 /* -- BUTTONS CALLS -- */
 
 void onPushed(unsigned int button){
-  Serial.println(button);
   if (BT_SEC_PLUS == button){//Add one second button
     unsigned long ts = rtcManager.getTimestamp();
     rtcManager.setFromTimestamp(ts + 1);
@@ -236,7 +221,6 @@ void onPushed(unsigned int button){
   }else if(BT_ONE_PULSE == button){
     startBell(EET_Simple);
   }else if(BT_ANGELUS == button){
-  Serial.println("Angelus");
     startBell(EET_Angelus);
   }
 }
@@ -261,35 +245,39 @@ void checkButtonsCalls(){
 /* --- Relay Action CallBack --- */
 
 void relayActionStarted(RelayAction * action){
-  Serial.println("relayActionStarted");
 }
 
 void relayActionChanged(RelayAction * action){
-  Serial.println("relayActionChanged");
 }
 
 void relayActionEnded(RelayAction * action){
-  Serial.println("relayActionEnded");
   RelayAction::deleteAllNodes(action);
 }
 
 /* -------------------------- */
 
+void initIOs(){
+  pinMode(BT_ONE_PULSE, INPUT);
+  pinMode(BT_ANGELUS, INPUT);
+  pinMode(BT_SEC_PLUS, INPUT);
+  pinMode(BT_SEC_MINUS, INPUT);
+  pinMode(CONTROLLINO_D0, OUTPUT);
+}
+
 void setup() {
-  Serial.begin(115200);
   display.init();
   rtcManager.init();
   //rtcManager.setFromTimestamp(1671143122);
   updateMCUClockFromRTC();
-  clockHandler.onEverySeconds(everySeconds);
-  clockHandler.onEveryMinutes(everyMinutes);
-  clockHandler.onEveryHours(everyHours);
+  clockHandler.onEverySeconds(&everySeconds);
+  clockHandler.onEveryMinutes(&everyMinutes);
+  clockHandler.onEveryHours(&everyHours);
   clockHandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
-  clockHandler.onRTCUpdateRequest(updateMCUClockFromRTC);
+  clockHandler.onRTCUpdateRequest(&updateMCUClockFromRTC);
   relayManager.setOnActionStarted(&relayActionStarted);
   relayManager.setOnActionChanged(&relayActionChanged);
   relayManager.setOnActionEnded(&relayActionEnded);
-  initInputs();
+  initIOs();
   setNextBellEventScheduled(0);
   updateFullDisplay();
 }

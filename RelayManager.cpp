@@ -6,16 +6,10 @@ RelayManager::RelayManager() : _firstNodeAction(NULL), _nodeAction(NULL), _relay
 }
 
 void RelayManager::setRelayOn(unsigned char relayId){
-  Serial.print("Relay ");
-  Serial.print(relayId);
-  Serial.println(" On !");
   digitalWrite(relayId, HIGH);
 }
 
 void RelayManager::setRelayOff(unsigned char relayId){
-  Serial.print("Relay ");
-  Serial.print(relayId);
-  Serial.println(" Off !");
   digitalWrite(relayId, LOW);
 }
 
@@ -37,15 +31,9 @@ void RelayManager::loop(){
     _loopLastMls = currentTime;
     if (_firstNodeAction != NULL){
       if (_actOnSince == 0){
-        Serial.print("On for ");
-        Serial.print(_nodeAction->getOnTiming());
-        Serial.println(" ms.");
         setRelayOn(_nodeAction->getOutputId());
         _actOnSince = currentTime;
       }else if (_actOffSince == 0 && currentTime >= _actOnSince + _nodeAction->getOnTiming() ){
-        Serial.print("Wait for ");
-        Serial.print(_nodeAction->getOffTiming());
-        Serial.println(" ms.");
         _actOffSince = currentTime;
         setRelayOff(_nodeAction->getOutputId());
       }else if(_actOnSince > 0 && _actOffSince > 0 && currentTime >= _actOffSince + _nodeAction->getOffTiming()){
@@ -53,13 +41,13 @@ void RelayManager::loop(){
         _actOnSince = 0;
         _actOffSince = 0;
         if (_nodeAction != NULL && _onActionChanged != NULL){
-          _onActionChanged(_nodeAction);
+          (*_onActionChanged)(_nodeAction);
         }
       }
     }
     if (_nodeAction == NULL && _firstNodeAction != NULL){
       if (_onActionEnded != NULL){
-        _onActionEnded(_firstNodeAction);  
+        (*_onActionEnded)(_firstNodeAction);  
       }
       _firstNodeAction = NULL;
       _actOnSince = 0;
@@ -74,7 +62,7 @@ bool RelayManager::startFromAction(RelayAction * act){
   _firstNodeAction = act;
   _nodeAction = act;
   if (_onActionStarted != NULL){
-    _onActionStarted(_firstNodeAction);
+    (*_onActionStarted)(_firstNodeAction);
   }
   return true;
 }

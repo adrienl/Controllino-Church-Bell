@@ -62,28 +62,33 @@ void ClockHandler::internalEachHour(){
 }
 
 void ClockHandler::internalTick(){
-  if (_timestamp % (_updateRTCRequestFreqMin * 60) == 0){
-    _rtcUpdateRequestFunc();
+  if (_timestamp % (_updateRTCRequestFreqMin * 60) == 0 && _rtcUpdateRequestFunc != NULL){
+    (*_rtcUpdateRequestFunc)();
   }
-  if (_timestamp % 60 == 0){
+  if (_timestamp % 60 == 0 && _everyMinutesFunc != NULL){
     internalEachHour();
-    _everyMinutesFunc(_timestamp);
+    (*_everyMinutesFunc)(_timestamp);
   }
-  if (_timestamp % 3600 == 0){
+  if (_timestamp % 3600 == 0 && _everyHoursFunc != NULL){
     internalEachHour();
-    _everyHoursFunc(_timestamp);
+    (*_everyHoursFunc)(_timestamp);
+  }
+}
+
+void ClockHandler::loopSecondPast(){
+  _timestamp++;
+  internalTick();
+  if (_everySecondsFunc != NULL){
+    (*_everySecondsFunc)(_timestamp);
   }
 }
 
 void ClockHandler::loop(){
   unsigned long mls = millis();
-  if (mls != _lastmls){
-    _lastmls = mls;
-    if (mls % 1000 == 0){//Called every Seconds
-      _timestamp++;
-      internalTick();
-      _everySecondsFunc(_timestamp);
-    }
+  if (mls == _lastmls) { return; }
+  _lastmls = mls;
+  if (mls % 1000 == 0){//Called every Seconds
+    loopSecondPast();
   }
 }
 

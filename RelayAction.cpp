@@ -126,11 +126,3 @@ static RelayAction * RelayAction::buildFiveAction(){
   act->getLastOfTheList()->setOffTiming(200);
   return act;
 }
-
-static void RelayAction::print(RelayAction * act){
-  int  i = 0;
-  while (act != NULL){
-    act = act->getNextAction();
-    i++;
-  }
-}

@@ -29,5 +29,4 @@ class RelayAction{
     static RelayAction * buildFiveAction();
     static RelayAction * buildAnyActions(unsigned int len);
     static void deleteAllNodes(RelayAction * act);
-    static void print(RelayAction * act);
 };
