@@ -11,24 +11,28 @@
 
 //Bell events you can add, remove or modify.
 Schedule bellSchedules[] = {
-  Schedule(EET_Simple, 6, 30, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),  // > Ring the Bell once at 6:30 AM every Monday, Wednesday, Thursday and Friday
-  Schedule(EET_Simple, 7, 0, ScheduleWeekDay(1, 0, 1, 0, 0, 0, 1)),   // > Ring the Bell once at 7:00 AM every Thuesday, Daturday and Sunday
-  Schedule(EET_Angelus, 7, 10, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)), // > Ring the Angelus at 7:10 AM every Monday, Wednesday, Thursday and Friday
-  Schedule(EET_Angelus, 7, 40, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)), // > Ring the Angelus at 7:40 AM every Thuesday and Saturday
-  Schedule(EET_Five, 8, 25, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),    // > Ring the Bell five time at 8:25 AM on Sunday
-  Schedule(EET_Simple, 8, 30, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),  // > Ring the Bell once at 8:30 AM on Sunday
-  Schedule(EET_Five, 11, 25, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),   // > Ring the Bell five time at 11:25 AM on Thuesday and Saturday
-  Schedule(EET_Simple, 11, 30, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)), // > Ring the Bell once at 11:30 AM on Thuesday and Saturday
-  Schedule(EET_Five, 12, 10),                                         // > Ring the Bell five time at 12:10 PM every day
-  Schedule(EET_Simple, 12, 15),                                       // > ...
-  Schedule(EET_Angelus, 12, 25),                                      // > ..
-  Schedule(EET_Five, 17, 40, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),   // > .
-  Schedule(EET_Simple, 17, 45, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
-  Schedule(EET_Five, 17, 55, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
-  Schedule(EET_Simple, 18, 0, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
-  Schedule(EET_Simple, 18, 30),
-  Schedule(EET_Five, 20, 40),
-  Schedule(EET_Simple, 20, 45),
+  Schedule(EET_One, 6, 30, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
+  Schedule(EET_One, 7, 0, ScheduleWeekDay(1, 0, 1, 0, 0, 0, 1)), 
+  Schedule(EET_Angelus, 7, 10, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
+  Schedule(EET_Angelus, 7, 40, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
+  Schedule(EET_Three, 8, 25, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
+  Schedule(EET_One, 8, 30, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
+  Schedule(EET_Five, 9, 55, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
+  Schedule(EET_Three, 11, 25, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)),
+  Schedule(EET_One, 11, 30, ScheduleWeekDay(0, 0, 1, 0, 0, 0, 1)), 
+  Schedule(EET_Three, 12, 10),                                        
+  Schedule(EET_One, 12, 15),
+  Schedule(EET_Angelus, 12, 25),
+  Schedule(EET_Five, 16, 55, ScheduleWeekDay(0, 0, 0, 0, 1, 0, 0)),
+  Schedule(EET_One, 17, 00, ScheduleWeekDay(0, 0, 0, 0, 1, 0, 0)),
+  Schedule(EET_One, 17, 40, ScheduleWeekDay(1, 0, 0, 0, 0, 0, 0)),
+  Schedule(EET_One, 17, 45, ScheduleWeekDay(1, 0, 0, 0, 1, 0, 0)),
+  Schedule(EET_Three, 17, 55, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
+  Schedule(EET_One, 18, 0, ScheduleWeekDay(0, 1, 1, 1, 0, 1, 1)),
+  Schedule(EET_Five, 18, 25),
+  Schedule(EET_One, 18, 30),
+  Schedule(EET_Three, 20, 40),
+  Schedule(EET_One, 20, 45),
   // Like the Schedule lines above, add any additional Schedule lines here.
 };
 
@@ -60,9 +64,9 @@ void updateMCUClockFromRTC(){
 void startBell(E_EventType event){
   RelayAction * act = NULL;
   if (event == EET_Angelus){act = RelayAction::buildAngelusActions();}
-  else if (event == EET_Triple){act = RelayAction::buildTripleAction();}
+  else if (event == EET_Three){act = RelayAction::buildTripleAction();}
   else if (event == EET_Five){act = RelayAction::buildFiveAction();}
-  else if (event == EET_Simple){act = RelayAction::buildSimpleAction();}
+  else if (event == EET_One){act = RelayAction::buildSimpleAction();}
   if (act != NULL && relayManager.startFromAction(act) == false){
     RelayAction::deleteAllNodes(act);
   }
@@ -105,8 +109,8 @@ void displayNextBellEvent(){
   if (_nextBellEvent != NULL){
     char title[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     E_EventType eventType = _nextBellEvent->getEventType();
-    if (eventType == EET_Simple){strcpy(title, "Simple\0");}
-    if (eventType == EET_Triple){strcpy(title, "Triple\0");}
+    if (eventType == EET_One){strcpy(title, "Simple\0");}
+    if (eventType == EET_Three){strcpy(title, "Triple\0");}
     if (eventType == EET_Five){strcpy(title, "Cinq\0");}
     if (eventType == EET_Angelus){strcpy(title, "Angelus\0");}
     unsigned int len = strlen(title);
@@ -219,7 +223,7 @@ void onPushed(unsigned int button){
     rtcManager.setFromTimestamp(ts - 1);
     updateMCUClockFromRTC();
   }else if(BT_ONE_PULSE == button){
-    startBell(EET_Simple);
+    startBell(EET_One);
   }else if(BT_ANGELUS == button){
     startBell(EET_Angelus);
   }

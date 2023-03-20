@@ -1,5 +1,5 @@
-#ifndef __DATETIMECONST
-#define __DATETIMECONST
+#ifndef __CONST
+#define __CONST
 
 #define CURRENT_CENTURY 21
 
@@ -29,8 +29,8 @@ const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 
 const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 typedef enum E_EventType {
-  EET_Simple,
-  EET_Triple,
+  EET_One,
+  EET_Three,
   EET_Five,
   EET_Angelus
 } E_EventType;
