@@ -73,9 +73,9 @@ static RelayAction * RelayAction::buildAngelusActions(){
   act31->setPreviousAction(act23);
   act23->setNextAction(act31);
   RelayAction * act33 = act31->getLastOfTheList();
-  act33->setOffTiming(15000);
+  act33->setOffTiming(17000);
 
-  RelayAction * v = RelayAction::buildAnyActions(10);
+  RelayAction * v = RelayAction::buildAnyActions(9);
   act33->setNextAction(v);
   v->setPreviousAction(act33);
   v->getLastOfTheList()->setOffTiming(200);
