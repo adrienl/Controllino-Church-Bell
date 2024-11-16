@@ -2,7 +2,7 @@
 
 #include <Wire.h>
 #include <hd44780.h>
-#include <hd44780ioClass/hd44780_I2Cexp.h>
+#include <hd44780ioClass/hd44780_I2Cexp.h> //By Bill Perry
 
 class Display {
 

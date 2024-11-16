@@ -38,11 +38,11 @@ Schedule bellSchedules[] = {
 
 #define NB_INPUT 4
 
-#define BT_SEC_PLUS   CONTROLLINO_A0
-#define BT_SEC_MINUS  CONTROLLINO_A1
-#define BT_ONE_PULSE  CONTROLLINO_A2
-#define BT_ANGELUS  CONTROLLINO_A3
-static unsigned char bts[NB_INPUT] = {BT_SEC_PLUS, BT_SEC_MINUS, BT_ONE_PULSE, BT_ANGELUS};
+#define BT_MIN_PLUS   CONTROLLINO_A0
+#define BT_MIN_MINUS  CONTROLLINO_A1
+#define BT_ONE_PULSE  CONTROLLINO_IN0
+#define BT_ANGELUS  CONTROLLINO_IN1
+static unsigned char bts[NB_INPUT] = {BT_ONE_PULSE, BT_ANGELUS, BT_MIN_PLUS, BT_MIN_MINUS};
 static bool bts_pushed[NB_INPUT] = {false, false, false, false};
 #define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 
@@ -59,6 +59,7 @@ Event     * _nextBellEvent = NULL;
 void updateMCUClockFromRTC(){
   unsigned long ts = rtcManager.getTimestamp();
   clockHandler.setTimestamp(ts);
+  updateFullDisplay();
 }
 
 void startBell(E_EventType event){
@@ -83,15 +84,17 @@ void triggerEvent(E_EventType event){
 /* Display Updates */
 
 void displayDate(DateTime * dateTimeObj){
-  char strDate[6] = {0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillUltraShortDateStringBuffer(strDate, 6);
+  uint8_t arrayLength = 8;
+  char strDate[arrayLength] = {0, 0, 0, 0, 0, 0, 0, 0};
+  dateTimeObj->fillUltraShortDateStringBuffer(strDate, arrayLength);
   display.printStringAt(0, 0, strDate);
 }
 
 void displayTime(DateTime * dateTimeObj){
-  char strTime[6] = {0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillShortTimeStringBuffer(strTime, 6);
-  display.printStringAt(11, 0, strTime);
+  uint8_t arrayLength = 9;
+  char strTime[arrayLength] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+  dateTimeObj->fillTimeStringBuffer(strTime, arrayLength);
+  display.printStringAt(8, 0, strTime);
 }
 
 /*void displayTimeZone(){
@@ -156,8 +159,6 @@ void checkBellEvent(){
 }
 
 void everyMinutes(unsigned long tmstp){
-  DateTime dateTime = clockHandler.getCurrentDateTime();
-  displayTime(&dateTime);
   checkBellEvent();
 }
 
@@ -166,8 +167,8 @@ void everyMinutes(unsigned long tmstp){
 /* ------- Called Every Seconds */
 
 void everySeconds(unsigned long tmstp){
-  /*DateTime dateTime = clockHandler.getCurrentDateTime();
-  displayTime(&dateTime);*/
+  DateTime dateTime = clockHandler.getCurrentDateTime();
+  displayTime(&dateTime);
 }
 
 /* ----------------------------- */
@@ -214,18 +215,16 @@ void setNextBellEventScheduled(unsigned char timeShiftSec){
 /* -- BUTTONS CALLS -- */
 
 void onPushed(unsigned int button){
-  if (BT_SEC_PLUS == button){//Add one second button
-    unsigned long ts = rtcManager.getTimestamp();
-    rtcManager.setFromTimestamp(ts + 1);
-    updateMCUClockFromRTC();
-  }else if (BT_SEC_MINUS == button){//Add one second button
-    unsigned long ts = rtcManager.getTimestamp();
-    rtcManager.setFromTimestamp(ts - 1);
-    updateMCUClockFromRTC();
-  }else if(BT_ONE_PULSE == button){
+  if(BT_ONE_PULSE == button){
     startBell(EET_One);
   }else if(BT_ANGELUS == button){
     startBell(EET_Angelus);
+  }else if(BT_MIN_PLUS == button){
+    rtcManager.addOneSecond();
+    updateMCUClockFromRTC();
+  }else if(BT_MIN_MINUS == button){
+    rtcManager.subtractOneSecond();
+    updateMCUClockFromRTC();
   }
 }
 
@@ -263,15 +262,17 @@ void relayActionEnded(RelayAction * action){
 void initIOs(){
   pinMode(BT_ONE_PULSE, INPUT);
   pinMode(BT_ANGELUS, INPUT);
-  pinMode(BT_SEC_PLUS, INPUT);
-  pinMode(BT_SEC_MINUS, INPUT);
+  pinMode(BT_MIN_PLUS, INPUT);
+  pinMode(BT_MIN_MINUS, INPUT);
+  //pinMode(BT_SEC_PLUS, INPUT);
+  //pinMode(BT_SEC_MINUS, INPUT);
   pinMode(CONTROLLINO_D0, OUTPUT);
 }
 
 void setup() {
   display.init();
   rtcManager.init();
-  //rtcManager.setFromTimestamp(1671143122);
+  //rtcManager.setFromTimestamp(1731799306);
   updateMCUClockFromRTC();
   clockHandler.onEverySeconds(&everySeconds);
   clockHandler.onEveryMinutes(&everyMinutes);

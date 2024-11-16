@@ -22,6 +22,10 @@ public:
     char  getMinute();
     char  getSecond();
     unsigned long getTimestamp();
+    void subtractOneMinute();
+    void addOneMinute();
+    void subtractOneSecond();
+    void addOneSecond();
 };
 
 #endif
