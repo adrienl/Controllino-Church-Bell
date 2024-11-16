@@ -38,8 +38,8 @@ Schedule bellSchedules[] = {
 
 #define NB_INPUT 4
 
-#define BT_MIN_PLUS   CONTROLLINO_A0
-#define BT_MIN_MINUS  CONTROLLINO_A1
+#define BT_MIN_PLUS   CONTROLLINO_A1
+#define BT_MIN_MINUS  CONTROLLINO_A0
 #define BT_ONE_PULSE  CONTROLLINO_IN0
 #define BT_ANGELUS  CONTROLLINO_IN1
 static unsigned char bts[NB_INPUT] = {BT_ONE_PULSE, BT_ANGELUS, BT_MIN_PLUS, BT_MIN_MINUS};
@@ -91,10 +91,10 @@ void displayDate(DateTime * dateTimeObj){
 }
 
 void displayTime(DateTime * dateTimeObj){
-  uint8_t arrayLength = 9;
-  char strTime[arrayLength] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  dateTimeObj->fillTimeStringBuffer(strTime, arrayLength);
-  display.printStringAt(8, 0, strTime);
+  uint8_t arrayLength = 6;
+  char strTime[arrayLength] = {0, 0, 0, 0, 0, 0};
+  dateTimeObj->fillShortTimeStringBuffer(strTime, arrayLength);
+  display.printStringAt(11, 0, strTime);
 }
 
 /*void displayTimeZone(){
@@ -133,7 +133,6 @@ void updateFullDisplay(){
   displayDate(&dateTime);
   displayTime(&dateTime);
   displayNextBellEvent();
-  //displayTimeZone();
 }
 
 /* ------------------- */
@@ -143,7 +142,6 @@ void updateFullDisplay(){
 void everyHours(unsigned long tmstp){
   DateTime dateTime = clockHandler.getCurrentDateTime();
   displayDate(&dateTime);
-  //displayTimeZone();
 }
 
 /* ------------------- */
@@ -159,6 +157,8 @@ void checkBellEvent(){
 }
 
 void everyMinutes(unsigned long tmstp){
+  DateTime dateTime = clockHandler.getCurrentDateTime();
+  displayTime(&dateTime);
   checkBellEvent();
 }
 
@@ -167,8 +167,7 @@ void everyMinutes(unsigned long tmstp){
 /* ------- Called Every Seconds */
 
 void everySeconds(unsigned long tmstp){
-  DateTime dateTime = clockHandler.getCurrentDateTime();
-  displayTime(&dateTime);
+
 }
 
 /* ----------------------------- */
@@ -220,10 +219,10 @@ void onPushed(unsigned int button){
   }else if(BT_ANGELUS == button){
     startBell(EET_Angelus);
   }else if(BT_MIN_PLUS == button){
-    rtcManager.addOneSecond();
+    rtcManager.addOneMinute();
     updateMCUClockFromRTC();
   }else if(BT_MIN_MINUS == button){
-    rtcManager.subtractOneSecond();
+    rtcManager.subtractOneMinute();
     updateMCUClockFromRTC();
   }
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Controllino.h>
-#define BELL_TIMING 80
+#define BELL_TIMING 70
 
 class RelayAction{
   private:

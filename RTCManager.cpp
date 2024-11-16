@@ -64,12 +64,14 @@ char RTCManager::getSecond(){
 void RTCManager::addOneMinute(){
   unsigned long ts = this->getTimestamp();
   ts = ts + 60;
+  ts = ts - (ts % 60);
   this->setFromTimestamp(ts);
 }
 
 void RTCManager::subtractOneMinute(){
   unsigned long ts = this->getTimestamp();
   ts = ts - 60;
+  ts = ts - (ts % 60);
   this->setFromTimestamp(ts);
 }
 
