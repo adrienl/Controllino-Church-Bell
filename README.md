@@ -38,3 +38,19 @@ Written on Arduino IDE 1.8.19
 ## Display
 
 - Pin Header : SCL/SDA/5V/GND
+
+## Class List and files usage
+
+- Controllino-Church-Bell.ino	->	The Main File
+- Const.h						->	Global Consts
+- Display						->	Manage the display
+- RelayManager					->	Manage RelayAction object and trigger Controllino Relays
+- RelayAction					->	Set a relay actions pattern
+- RTCManager					->	Manage the Controllino RTC Clock
+- Timezone						->	Timezone Builder
+- DateTimeTool					-> 	Tools for DateTime clas
+- DateTime						-> 	DateTime object
+- ClockHandler					->	Manage Live Clock And Timezone
+- ScheduleWeekDay				->	Weekday Object Builder
+- Schedule						->	Schedule Bell Rings
+- Event							->	Associate Event Type and schedule to execute the event
