@@ -11,6 +11,12 @@ void Display::init(){
   _lcd.home();
 }
 
+void Display::clearAll(){
+  for (unsigned char i = 0; i < _lines; i++){
+    clearAt(0, i, _rows);
+  }
+}
+
 void Display::clearAt(unsigned char x, unsigned char y, unsigned char len){
   char str[len + 1];
   _lcd.setCursor(x, y);

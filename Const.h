@@ -25,6 +25,8 @@
 #define DST_HOUR_END    3
 #define DST_MIN_END     0
 
+#define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
+
 const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -35,4 +37,28 @@ typedef enum E_EventType {
   EET_Angelus
 } E_EventType;
 
+<<<<<<< Updated upstream
+=======
+typedef enum eSetTime{
+  eSetMinute = 1,
+  eSetHour = 2,
+  eSetDay = 3,
+  eSetMonth = 4,
+  eSetYear = 5
+} tSetTime;
+
+typedef enum tMenuItemType{
+    eMenu_Date,
+    eMenu_Time
+}eMenuItemType;
+
+typedef enum tMenuSubItemType{
+    eMenu_Date_Day = 1,
+    eMenu_Date_Month = 2,
+    eMenu_Date_Year = 4,
+    eMenu_Time_Minute = 8,
+    eMenu_Time_Hour = 16
+}eMenuSubItemType;
+
+>>>>>>> Stashed changes
 #endif

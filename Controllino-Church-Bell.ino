@@ -8,6 +8,7 @@
 #include "ScheduleWeekDay.hpp"
 #include "Event.hpp"
 #include "RelayManager.hpp"
+<<<<<<< Updated upstream
 
 //Bell events you can add, remove or modify.
 Schedule bellSchedules[] = {
@@ -47,12 +48,31 @@ static bool bts_pushed[NB_INPUT] = {false, false, false, false};
 #define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 
 Display display = Display::build2X16();
+=======
+#include "ButtonsManager.hpp"
+#include "MainApp.hpp"
+#include "Display.hpp"
+#include "Menu.hpp"
+
+//TODO
+// - Remove Timezone Class (Keep Summer time only)
+// - When time is changed, check the most appropriate event
+// - Build Time / Date Editor
+
+>>>>>>> Stashed changes
 RTCManager rtcManager = RTCManager();
 TimeZone tz = TimeZone::buildEuropeParisTimezone();
 ClockHandler clockHandler = ClockHandler(tz);
+<<<<<<< Updated upstream
 RelayManager relayManager = RelayManager();
 
 Event     * _nextBellEvent = NULL;
+=======
+Display display = Display::build2X16();
+MainApp mainApp = MainApp(&display, &clockHandler);
+Menu menu = Menu(&display);
+bool showMenu = false;
+>>>>>>> Stashed changes
 
 /* Others calls */
 
@@ -161,6 +181,7 @@ void everyMinutes(unsigned long tmstp){
   checkBellEvent();
 }
 
+<<<<<<< Updated upstream
 /* ----------------------------- */
 
 /* ------- Called Every Seconds */
@@ -242,6 +263,42 @@ void checkButtonsCalls(){
     }else if (bt < 1 && bts_pushed[i] == true) {
       bts_pushed[i] = false;
       onReleased(bts[i]);
+=======
+void onButtonPushed(unsigned int button){
+  if(ButtonsManager::BT_ONE_PULSE == button){
+    startBell(EET_One);
+  }else if(ButtonsManager::BT_ANGELUS == button){
+    startBell(EET_Angelus);
+  }else if(ButtonsManager::BT_PLUS == button){
+    if (showMenu){
+      menu.increase();
+    }else{
+      rtcManager.addOneMinute();
+      updateMCUClockFromRTC();
+    }
+
+  }else if(ButtonsManager::BT_MINUS == button){
+    if (showMenu){
+      menu.decrease();
+    }else{
+      rtcManager.subtractOneMinute();
+      updateMCUClockFromRTC();
+    }
+    
+  }else if(ButtonsManager::BT_SEL == button){
+    //setTimeMode = !setTimeMode;
+    //mainApp.updateDisplay();
+  }else if(ButtonsManager::BT_MENU == button){
+    showMenu = !showMenu;
+    if (showMenu){
+      mainApp.enableDisplayUpdate(false);
+      menu.enableDisplayUpdate(true);
+      menu.diplayFirstMenu();
+    }else{
+      menu.enableDisplayUpdate(false);
+      mainApp.enableDisplayUpdate(true);
+      mainApp.updateDisplay();
+>>>>>>> Stashed changes
     }
   }
 }
@@ -258,6 +315,22 @@ void relayActionEnded(RelayAction * action){
   RelayAction::deleteAllNodes(action);
 }
 
+int menuRequestInitialValue(eMenuSubItemType menuType){
+  return 0;
+}
+
+void menuEditedValue(eMenuSubItemType menuType, int value){
+
+}
+
+void menuBeginEdition(eMenuItemType menuType){
+
+}
+
+void menuEndEdition(eMenuItemType menuType){
+
+}
+
 /* -------------------------- */
 
 void initIOs(){
@@ -271,9 +344,13 @@ void initIOs(){
 void setup() {
   display.init();
   rtcManager.init();
+<<<<<<< Updated upstream
   //rtcManager.setFromTimestamp(1671143122);
   updateMCUClockFromRTC();
   clockHandler.onEverySeconds(&everySeconds);
+=======
+  //rtcManager.setFromTimestamp(1731799306);
+>>>>>>> Stashed changes
   clockHandler.onEveryMinutes(&everyMinutes);
   clockHandler.onEveryHours(&everyHours);
   clockHandler.setRTCUpdateRequestFrequency(SYNC_RTC_EVERY_XMIN);
@@ -281,9 +358,23 @@ void setup() {
   relayManager.setOnActionStarted(&relayActionStarted);
   relayManager.setOnActionChanged(&relayActionChanged);
   relayManager.setOnActionEnded(&relayActionEnded);
+<<<<<<< Updated upstream
   initIOs();
   setNextBellEventScheduled(0);
   updateFullDisplay();
+=======
+  pinMode(CONTROLLINO_D0, OUTPUT);
+  buttonsManager.initButtons();
+  buttonsManager.setOnButtonPushed(&onButtonPushed);
+  mainApp.setTriggerEvent(&startBell);
+  mainApp.init();
+  mainApp.updateDisplay();
+  menu.onRequestValue(&menuRequestInitialValue);
+  menu.onValueChanged(&menuEditedValue);
+  menu.onBeginEdition(&menuBeginEdition);
+  menu.onEndEdition(&menuEndEdition);
+  updateMCUClockFromRTC();
+>>>>>>> Stashed changes
 }
 
 void loop() {

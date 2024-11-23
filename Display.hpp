@@ -14,6 +14,7 @@ public:
     int x;
     Display(unsigned char lines, unsigned char rows);
     void clearAt(unsigned char t, unsigned char y, unsigned char len);
+    void clearAll();
     void printCharAt(unsigned char t, unsigned char y, char ch);
     void printStringAt(unsigned char x, unsigned char y, char * str);
     void init();
