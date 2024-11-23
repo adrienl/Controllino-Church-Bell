@@ -35,4 +35,12 @@ typedef enum E_EventType {
   EET_Angelus
 } E_EventType;
 
+typedef enum eSetTime{
+  eSetMinute = 1,
+  eSetHour = 2,
+  eSetDay = 3,
+  eSetMonth = 4,
+  eSetYear = 5
+} tSetTime;
+
 #endif

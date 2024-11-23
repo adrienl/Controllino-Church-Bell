@@ -17,6 +17,7 @@ public:
     void printCharAt(unsigned char t, unsigned char y, char ch);
     void printStringAt(unsigned char x, unsigned char y, char * str);
     void init();
+    void test();
     static Display build2X16() {
       return Display(2, 16);
     }

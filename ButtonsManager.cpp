@@ -38,6 +38,8 @@ void ButtonsManager::setOnButtonReleased(void (*onButtonReleased)(unsigned int b
 void ButtonsManager::initButtons(){
   pinMode(BT_ONE_PULSE, INPUT);
   pinMode(BT_ANGELUS, INPUT);
-  pinMode(BT_MIN_PLUS, INPUT);
-  pinMode(BT_MIN_MINUS, INPUT);  
+  pinMode(BT_PLUS, INPUT);
+  pinMode(BT_MINUS, INPUT);  
+  pinMode(BT_SET, INPUT);
+  pinMode(BT_SEL, INPUT);
 }

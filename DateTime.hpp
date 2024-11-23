@@ -33,6 +33,7 @@ public:
     unsigned char   getSecond();
     unsigned int    getWeekDay();
     DateTime        getNextDay();
+    DateTime *      copy();
     
     void fillTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 9 bytes;
     void fillShortTimeStringBuffer(char * buff, unsigned char len); //Prepare a buffer 6 bytes;
