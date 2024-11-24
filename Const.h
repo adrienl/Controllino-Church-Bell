@@ -37,8 +37,6 @@ typedef enum E_EventType {
   EET_Angelus
 } E_EventType;
 
-<<<<<<< Updated upstream
-=======
 typedef enum eSetTime{
   eSetMinute = 1,
   eSetHour = 2,
@@ -60,5 +58,4 @@ typedef enum tMenuSubItemType{
     eMenu_Time_Hour = 16
 }eMenuSubItemType;
 
->>>>>>> Stashed changes
 #endif
