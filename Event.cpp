@@ -1,6 +1,6 @@
 #include "Event.hpp"
 
-Event::Event(E_EventType et, DateTime dt) : _eventType(et), _datetime(dt){
+Event::Event(eEventType et, DateTime dt) : _eventType(et), _datetime(dt){
   
 }
 
@@ -12,6 +12,6 @@ unsigned long Event::getUTCTimestamp(){
   return _datetime.getUTCTimestamp();
 }
 
-E_EventType Event::getEventType(){
+eEventType Event::getEventType(){
   return _eventType;  
 }

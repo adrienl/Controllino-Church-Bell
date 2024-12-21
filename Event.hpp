@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
 #include "DateTime.hpp"
 #include "Const.h"
 
@@ -8,11 +7,11 @@ class Event {
 
 private:
     DateTime    _datetime;
-    E_EventType _eventType;
+    eEventType _eventType;
     bool        _isInternal;
 public:
-    Event(E_EventType eventType, DateTime dt);
+    Event(eEventType eventType, DateTime dt);
     DateTime getDateTime();
-    E_EventType getEventType();
+    eEventType getEventType();
     unsigned long getUTCTimestamp();
 };

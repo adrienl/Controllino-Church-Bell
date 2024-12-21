@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "Const.h"
 #include "DateTimeTool.hpp"
+#include <Arduino.h>
 
 RTCManager::RTCManager() {
 
@@ -61,33 +62,8 @@ char RTCManager::getSecond(){
   return Controllino_GetSecond();
 }
 
-void RTCManager::addOneMinute(){
-  unsigned long ts = this->getTimestamp();
-  ts = ts + 60;
-  ts = ts - (ts % 60);
-  this->setFromTimestamp(ts);
-}
-
-void RTCManager::subtractOneMinute(){
-  unsigned long ts = this->getTimestamp();
-  ts = ts - 60;
-  ts = ts - (ts % 60);
-  this->setFromTimestamp(ts);
-}
-
-void RTCManager::addOneSecond(){
-  unsigned long ts = this->getTimestamp();
-  ts = ts + 1;
-  this->setFromTimestamp(ts);
-}
-
-void RTCManager::subtractOneSecond(){
-  unsigned long ts = this->getTimestamp();
-  ts = ts - 1;
-  this->setFromTimestamp(ts);
-}
-
 unsigned long RTCManager::getTimestamp(){
+  unsigned long ts;
   DateTime datetime(
     getYear(),
     getMonth(),
@@ -96,8 +72,6 @@ unsigned long RTCManager::getTimestamp(){
     getMinute(),
     getSecond()
   );
- 
-  unsigned long ts;
   ts = DateTimeTool::dateTimeToUTCTimestamp(&datetime);
   return ts;
 }

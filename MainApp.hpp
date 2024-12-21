@@ -7,7 +7,7 @@
 #include "Schedule.hpp"
 #include "ClockHandler.hpp"
 
-static const Schedule BELL_SCHEDULES[] = {
+static Schedule BELL_SCHEDULES[] = {
     Schedule(EET_One, 6, 30, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
     Schedule(EET_One, 7, 0, ScheduleWeekDay(1, 0, 1, 0, 0, 0, 1)), 
     Schedule(EET_Angelus, 7, 10, ScheduleWeekDay(0, 1, 0, 1, 1, 1, 0)),
@@ -37,16 +37,18 @@ class MainApp{
     public:
         MainApp(Display * display, ClockHandler * clockHandler);
         void init();
-        void setTriggerEvent(void (*)(E_EventType));
+        void setTriggerEvent(void (*)(eEventType));
         void handleMinuteChange();
         void handleHourChange();
         void updateDisplay();
+        void enableDisplayUpdate(bool enable);
     private:
         Display * _display;
         ClockHandler * _clockHandler;
-        void (*_triggerEvent) (E_EventType event);
+        void (*_triggerEvent) (eEventType event);
         Event   * _nextBellEvent = NULL;
-        void triggerEvent(E_EventType event);
+        bool _displayUpdateGranted;
+        void triggerEvent(eEventType event);
         void displayBellEvent(Event * bellEvent);
         void checkBellEvent();
         void replaceWithNewBellEvent(Event * e);
