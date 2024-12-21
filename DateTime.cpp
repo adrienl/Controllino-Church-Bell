@@ -4,8 +4,6 @@
 #include "DateTimeTool.hpp"
 #include <Arduino.h>
 
-#define CURRENT_CENTURY 21
-
 DateTime::DateTime(unsigned long timestamp) : _timestamp(timestamp), _timeShift(0) {
   buildDatetime();
 }

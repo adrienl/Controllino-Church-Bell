@@ -40,6 +40,6 @@ void ButtonsManager::initButtons(){
   pinMode(BT_ANGELUS, INPUT);
   pinMode(BT_PLUS, INPUT);
   pinMode(BT_MINUS, INPUT);  
-  pinMode(BT_MENU, INPUT);
-  pinMode(BT_SEL, INPUT);
+  pinMode(BT_EXIT, INPUT);
+  pinMode(BT_ENTER, INPUT);
 }

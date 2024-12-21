@@ -62,7 +62,7 @@ void MainApp::displayDate(DateTime * dateTimeObj){
 void MainApp::displayBellEvent(Event * bellEvent){
   if (bellEvent != NULL){
       char title[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-      E_EventType eventType = bellEvent->getEventType();
+      eEventType eventType = bellEvent->getEventType();
       if (eventType == EET_One){strcpy(title, "Simple\0");}
       if (eventType == EET_Three){strcpy(title, "Triple\0");}
       if (eventType == EET_Five){strcpy(title, "Cinq\0");}
@@ -81,7 +81,7 @@ void MainApp::displayBellEvent(Event * bellEvent){
   }
 }
 
-void MainApp::triggerEvent(E_EventType event){
+void MainApp::triggerEvent(eEventType event){
     if (_triggerEvent != NULL){
         _triggerEvent(event);
     }
@@ -118,7 +118,7 @@ void MainApp::updateDisplay(){
   displayBellEvent(_nextBellEvent);
 }
 
-void MainApp::setTriggerEvent(void (*triggerEvent)(E_EventType)){
+void MainApp::setTriggerEvent(void (*triggerEvent)(eEventType)){
     _triggerEvent = triggerEvent;
 }
 

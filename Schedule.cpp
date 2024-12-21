@@ -1,12 +1,12 @@
 #include "Schedule.hpp"
 #include <Arduino.h>
 
-Schedule::Schedule(E_EventType eventType, unsigned char hour, unsigned char minute, ScheduleWeekDay weekDays) :
+Schedule::Schedule(eEventType eventType, unsigned char hour, unsigned char minute, ScheduleWeekDay weekDays) :
   _eventType(eventType), _hour(hour), _minute(minute), _weekDays(weekDays){
   
 }
 
-Schedule::Schedule(E_EventType eventType, unsigned char hour, unsigned char minute) :
+Schedule::Schedule(eEventType eventType, unsigned char hour, unsigned char minute) :
   _eventType(eventType), _hour(hour), _minute(minute), _weekDays(ScheduleWeekDay(1, 1, 1, 1, 1, 1, 1)){
     
 }
@@ -19,7 +19,7 @@ DateTime Schedule::datetimeWithScheduledTime(DateTime dt){
   return DateTime(nYear, nMon, nDay, _hour, _minute, 0, nShift);
 }
 
-E_EventType Schedule::getEventType(){
+eEventType Schedule::getEventType(){
   return _eventType;
 }
 

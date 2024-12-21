@@ -1,6 +1,6 @@
-#include "ClockHandler.hpp"
-#include <time.h>
 #include <Arduino.h>
+#include <time.h>
+#include "ClockHandler.hpp"
 #include "DateTimeTool.hpp"
 
 ClockHandler::ClockHandler() : _currentTimezone(TimeZone::buildUTC0Timezone()), _isDST(false), _DSTTimestamps({0, 0}) {

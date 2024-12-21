@@ -27,35 +27,53 @@
 
 #define SYNC_RTC_EVERY_XMIN 1440//Update every 6 hours
 
-const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+#define SEC_1970_2000 946684800
 
-typedef enum E_EventType {
+
+const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //February is 28
+const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //February is 29
+
+typedef enum eEventType {
   EET_One,
   EET_Three,
   EET_Five,
   EET_Angelus
-} E_EventType;
+}eEventType;
 
-typedef enum eSetTime{
-  eSetMinute = 1,
-  eSetHour = 2,
-  eSetDay = 3,
-  eSetMonth = 4,
-  eSetYear = 5
-} tSetTime;
-
-typedef enum tMenuItemType{
-    eMenu_Date,
-    eMenu_Time
+typedef enum eMenuItemType{
+  eMenu_Date,
+  eMenu_Time
 }eMenuItemType;
 
-typedef enum tMenuSubItemType{
-    eMenu_Date_Day = 1,
-    eMenu_Date_Month = 2,
-    eMenu_Date_Year = 4,
-    eMenu_Time_Minute = 8,
-    eMenu_Time_Hour = 16
-}eMenuSubItemType;
+typedef enum eButton{
+  BT_SELECT,
+  BT_BACK,
+  BT_PLUS,
+  BT_MINUS
+}eButton;
+
+typedef enum eMenuValueType{
+  MP_UNDEFINED,
+  MP_MINUTE,
+  MP_HOUR,
+  MP_DAY,
+  MP_MONTH,
+  MP_YEAR
+}eMenuValueType;
+
+typedef struct sMenuComposition{
+  unsigned char idx;
+  eMenuValueType partType;
+  eMenuItemType menuType;
+  char name[8];
+  unsigned char cursorPos;
+  int minVal;
+  int maxVal;
+}sMenuComposition;
+
+    // static const unsigned char BT_MINUS = CONTROLLINO_A0;
+    // static const unsigned char BT_PLUS = CONTROLLINO_A1;
+    // static const unsigned char BT_SEL = CONTROLLINO_A2;
+    // static const unsigned char BT_MENU = CONTROLLINO_A3;
 
 #endif

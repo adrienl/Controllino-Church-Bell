@@ -8,14 +8,19 @@ Written on Arduino IDE 1.8.19
 - ✅ Controllino RTC
 - ✅ Display Current Date
 - ✅ Display Current Time
-- ✅ Display Current Timezone
-- 🟠 Adjust Time
-- ⭕️ Adjust Date
+- ✅ Adjust Time
+- ✅ Adjust Date
 - ✅ Manage Timezone
 - ✅ Manage Daylight Saving Time
 - ✅ Manage Ringing Schedule
 - ✅ Manage Ringing Sequence
 - ✅ Display Next Action
+- ⭕️ Remove Timezone Management
+- ⭕️ Remove Unused & memory comsuming code...
+- ⭕️ Integrate Tocsin style bell ring
+
+If any memory left :
+- ⭕️ Edit Schedules on LCD Device
 
 ## Hardware
 

@@ -37,7 +37,7 @@ class MainApp{
     public:
         MainApp(Display * display, ClockHandler * clockHandler);
         void init();
-        void setTriggerEvent(void (*)(E_EventType));
+        void setTriggerEvent(void (*)(eEventType));
         void handleMinuteChange();
         void handleHourChange();
         void updateDisplay();
@@ -45,10 +45,10 @@ class MainApp{
     private:
         Display * _display;
         ClockHandler * _clockHandler;
-        void (*_triggerEvent) (E_EventType event);
+        void (*_triggerEvent) (eEventType event);
         Event   * _nextBellEvent = NULL;
         bool _displayUpdateGranted;
-        void triggerEvent(E_EventType event);
+        void triggerEvent(eEventType event);
         void displayBellEvent(Event * bellEvent);
         void checkBellEvent();
         void replaceWithNewBellEvent(Event * e);
