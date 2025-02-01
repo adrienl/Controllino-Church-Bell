@@ -3,13 +3,7 @@
 #include "ClockHandler.hpp"
 #include "DateTimeTool.hpp"
 
-ClockHandler::ClockHandler() : _currentTimezone(TimeZone::buildUTC0Timezone()), _isDST(false), _DSTTimestamps({0, 0}) {
-  _timestamp = 0;
-  _lastmls = 0;
-  _updateRTCRequestFreqMin = 60;//Default every 60 minutes
-}
-
-ClockHandler::ClockHandler(TimeZone timezone) : _currentTimezone(timezone), _isDST(false), _DSTTimestamps({0, 0}){
+ClockHandler::ClockHandler() : _isDST(false), _DSTTimestamps({0, 0}) {
   _timestamp = 0;
   _lastmls = 0;
   _updateRTCRequestFreqMin = 60;//Default every 60 minutes
@@ -20,8 +14,8 @@ void ClockHandler::setTimestamp(unsigned long timestamp){
 }
 
 void ClockHandler::internalUpdateDSTOnYear(unsigned int year){
-  DateTime dtDSTBegin = DateTimeTool::DSTBeginDatetime(year, _currentTimezone);
-  DateTime dtDSTEnd = DateTimeTool::DSTEndDatetime(year, _currentTimezone);
+  DateTime dtDSTBegin = DateTimeTool::DSTBeginDatetime(year);
+  DateTime dtDSTEnd = DateTimeTool::DSTEndDatetime(year);
   _DSTTimestamps[0] = dtDSTBegin.getUTCTimestamp();
   _DSTTimestamps[1] = dtDSTEnd.getUTCTimestamp();
 }
@@ -47,9 +41,9 @@ void ClockHandler::updateDSTState(){
 
 DateTime ClockHandler::getCurrentDateTime(){ // To update
   if (_isDST){
-    return DateTime(_timestamp, _currentTimezone.getDSTOffsetInMinutes());
+    return DateTime(_timestamp, DST_OFFSET_MIN);
   }else{
-    return DateTime(_timestamp, _currentTimezone.getOffsetInMinutes());
+    return DateTime(_timestamp, 0);
   }
 }
 

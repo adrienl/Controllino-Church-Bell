@@ -13,7 +13,6 @@
 #include "MenuItemDate.hpp"
 #include "MenuItemTime.hpp"
 #include "DateTimeTool.hpp"
-#include "TimeZone.hpp"
 
 //TODO
 // - Remove Timezone Class (Keep Summer time only)
@@ -21,10 +20,9 @@
 // - Build Time / Date Editor
 
 RTCManager rtcManager = RTCManager();
-TimeZone tz = TimeZone::buildEuropeParisTimezone();
 RelayManager relayManager = RelayManager();
 ButtonsManager buttonsManager = ButtonsManager();
-ClockHandler clockHandler = ClockHandler(tz);
+ClockHandler clockHandler = ClockHandler();
 Display display = Display::build2X16();
 MainApp mainApp = MainApp(&display, &clockHandler);
 MenuItemDate _menuItemDate;
@@ -37,6 +35,7 @@ bool showMenu = false;
 void updateMCUClockFromRTC(){
   unsigned long ts = rtcManager.getTimestamp();
   clockHandler.setTimestamp(ts);
+  DateTime dt = clockHandler.getCurrentDateTime();
   mainApp.updateDisplay();
 }
 
@@ -150,6 +149,7 @@ void menuLeaveValueEdition(MenuItem * menuItem){
     unsigned long newTS = newDT.getUTCTimestamp();
     rtcManager.setFromTimestamp(newTS);
     updateMCUClockFromRTC();
+    mainApp.init();
   }
 }
 
@@ -192,7 +192,6 @@ void relayActionEnded(RelayAction * action){
 /* -------------------------- */
 
 void setupMenu(){
-  
   _menuItemDate.setDisplay(&display);
   _menuItemDate.onLeaveValueEdition(&menuLeaveValueEdition);
   _menuItemDate.onRequestValues(&menuRequestValues);
@@ -227,6 +226,7 @@ void setupButtons(){
 }
 
 void setupMainApp(){
+  updateMCUClockFromRTC();
   mainApp.setTriggerEvent(&startBell);
   mainApp.init();
   mainApp.updateDisplay();
@@ -240,7 +240,6 @@ void setup() {
   setupRelay();
   setupButtons();
   setupMainApp();
-  updateMCUClockFromRTC();
 }
 
 void everySecondTicked(unsigned long tickValue){

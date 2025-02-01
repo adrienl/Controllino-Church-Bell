@@ -13,7 +13,6 @@ private:
     void (*_rtcUpdateRequestFunc) ();
     
     unsigned long _lastmls;
-    TimeZone _currentTimezone;
     unsigned int _updateRTCRequestFreqMin;
     bool _isDST;
     unsigned long _DSTTimestamps[2];
@@ -25,7 +24,6 @@ private:
     
 public:
     ClockHandler();
-    ClockHandler(TimeZone timezone);
     void setTimestamp(unsigned long ts);
     void updateDSTState();
     void loop();

@@ -33,7 +33,7 @@ void RelayManager::loop(){
       if (_actOnSince == 0){
         setRelayOn(_nodeAction->getOutputId());
         _actOnSince = currentTime;
-      }else if (_actOffSince == 0 && currentTime >= _actOnSince + _nodeAction->getOnTiming() ){
+      }else if (_actOffSince == 0 && currentTime >= _actOnSince + BELL_TIMING){
         _actOffSince = currentTime;
         setRelayOff(_nodeAction->getOutputId());
       }else if(_actOnSince > 0 && _actOffSince > 0 && currentTime >= _actOffSince + _nodeAction->getOffTiming()){

@@ -1,3 +1,4 @@
+
 #include "MainApp.hpp"
 
 MainApp::MainApp(Display * display, ClockHandler * clockHandler) : _display(display), _clockHandler(clockHandler), _triggerEvent(NULL), _displayUpdateGranted(true){}
@@ -20,6 +21,8 @@ void MainApp::setNextBellEventScheduled(unsigned char timeShiftSec){
   int i = 0;
   DateTime currentDT = _clockHandler->getCurrentDateTime();
   DateTime nextDT = DateTime(currentDT.getUTCTimestamp() + timeShiftSec, currentDT.getTimeShift());
+  DateTime * dt;
+  dt = &currentDT;
   bool firstScheduleDefined = false;
   unsigned long ts = 0;
   Schedule * eventSchedule = NULL;

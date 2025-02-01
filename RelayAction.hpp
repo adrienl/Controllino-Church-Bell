@@ -1,25 +1,22 @@
 #pragma once
 
 #include <Controllino.h>
-#define BELL_TIMING 70
+#define BELL_TIMING 60
 
 class RelayAction{
   private:
-    int _outputId;
-    unsigned int _onTiming;
+    unsigned char _outputId;
     unsigned int _offTiming;
     RelayAction * _previousAction;
     RelayAction * _nextAction;
   public:
-    RelayAction(unsigned char ouputId, unsigned int onTiming, unsigned int offTiming);
+    RelayAction(unsigned char ouputId, unsigned int offTiming);
     void setOffTiming(unsigned timing);
     void setOnTiming(unsigned timing);
     void setNextAction(RelayAction * action);
     void setPreviousAction(RelayAction * action);
     RelayAction * getNextAction();
-    RelayAction * getPreviousAction();
     unsigned char getOutputId();
-    unsigned int getOnTiming();
     unsigned int getOffTiming();
     RelayAction * getLastOfTheList();
     RelayAction * getFirstOfTheList();

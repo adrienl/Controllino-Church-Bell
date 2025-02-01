@@ -39,25 +39,6 @@ static unsigned int DateTimeTool::leapYearsPastSince1970(unsigned int yearToComp
   return leapYearsLength;
 }
 
-// static void DateTimeTool::getDayAndMonthFromPastdays(unsigned int currentYear, unsigned int pastdays, unsigned char * month, unsigned char * day){
-//   unsigned char i = 0;
-//   pastdays += 1;
-//   bool isLeapYear = getIsLeapYear(currentYear);
-//   if (isLeapYear){
-//     while (i < 12 && pastdays > DAYS_LPMONTH[i]){
-//       pastdays -= DAYS_LPMONTH[i];
-//       i++;
-//     }
-//   }else{
-//     while (i < 12 && pastdays > DAYS_SDMONTH[i]){
-//       pastdays -= DAYS_SDMONTH[i];
-//       i++;
-//     }
-//   }
-//   *month = i + 1;
-//   *day = pastdays;
-// }
-
 static unsigned long DateTimeTool::secsPastFrom1970ToCurYear(unsigned int currentYear){ //Private
   unsigned int leapYearsLength;
   unsigned long leapSec1970ToCurY;
@@ -180,12 +161,12 @@ static unsigned char DateTimeTool::DSTTimeDayEnd(unsigned int y){
     return 31 - weekDay;
 }
 
-static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year, TimeZone tz){
+static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year){
     unsigned char dstBeginDay = DSTTimeDayBegin(year);
-    return DateTime(year, DST_MONTH_BEGIN, dstBeginDay, DST_HOUR_BEGIN, DST_MIN_BEGIN, 0, tz.getOffsetInMinutes());
+    return DateTime(year, DST_MONTH_BEGIN, dstBeginDay, DST_HOUR_BEGIN, DST_MIN_BEGIN, 0, 0);
 }
 
-static DateTime DateTimeTool::DSTEndDatetime(unsigned int year, TimeZone tz){
+static DateTime DateTimeTool::DSTEndDatetime(unsigned int year){
     unsigned char dstEndDay = DSTTimeDayEnd(year);
-    return DateTime(year, DST_MONTH_END, dstEndDay, DST_HOUR_END, DST_MIN_END, 0, tz.getDSTOffsetInMinutes());
+    return DateTime(year, DST_MONTH_END, dstEndDay, DST_HOUR_END, DST_MIN_END, 0, DST_OFFSET_MIN);
 }

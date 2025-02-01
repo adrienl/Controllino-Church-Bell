@@ -29,6 +29,8 @@
 
 #define SEC_1970_2000 946684800
 
+#define DST_OFFSET_MIN 60
+
 
 const unsigned char DAYS_SDMONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //February is 28
 const unsigned char DAYS_LPMONTH[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; //February is 29

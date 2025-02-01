@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include "Const.h"
 #include "DateTime.hpp"
-#include "Timezone.hpp"
 
 class DateTimeTool {
 private:
@@ -22,8 +21,8 @@ public:
     static unsigned long dateTimeToLocalTimestamp(DateTime * datetime);
     static unsigned char DSTTimeDayBegin(unsigned int y);
     static unsigned char DSTTimeDayEnd(unsigned int y);
-    static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year, TimeZone tz);
-    static DateTime DateTimeTool::DSTEndDatetime(unsigned int year, TimeZone tz);
+    static DateTime DateTimeTool::DSTBeginDatetime(unsigned int year);
+    static DateTime DateTimeTool::DSTEndDatetime(unsigned int year);
 };
 
 

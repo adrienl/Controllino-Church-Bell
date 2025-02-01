@@ -116,7 +116,3 @@ void DateTime::fillShortDateStringBuffer(char * buff, unsigned char len){
 void DateTime::fillUltraShortDateStringBuffer(char * buff, unsigned char len){
   snprintf(buff, len, "%02d/%02d\0", getDay(), getMonth());
 }
-
-DateTime * DateTime::copy(){
-    return new DateTime(this->getUTCTimestamp());
-}

@@ -1,6 +1,6 @@
 #include "RelayAction.hpp"
 
-RelayAction::RelayAction(unsigned char outputId, unsigned int onTiming, unsigned int offTiming) : _outputId(outputId), _onTiming(onTiming), _offTiming(offTiming), _nextAction(NULL), _previousAction(NULL){
+RelayAction::RelayAction(unsigned char outputId, unsigned int offTiming) : _outputId(outputId), _offTiming(offTiming), _nextAction(NULL), _previousAction(NULL){
 
 }
 
@@ -32,24 +32,12 @@ void  RelayAction::setPreviousAction(RelayAction * action){
   _previousAction = action;
 }
 
-RelayAction * RelayAction::getPreviousAction(){
-  return _previousAction;  
-}
-
 unsigned char RelayAction::getOutputId(){
   return _outputId;
 }
 
-unsigned int RelayAction::getOnTiming(){
-  return _onTiming;
-}
-
 unsigned int RelayAction::getOffTiming(){
   return _offTiming;  
-}
-
-void RelayAction::setOnTiming(unsigned int timing){
-  _onTiming = timing;
 }
 
 void RelayAction::setOffTiming(unsigned int timing){
@@ -95,10 +83,10 @@ static void RelayAction::deleteAllNodes(RelayAction * act){
 static RelayAction * RelayAction::buildAnyActions(unsigned int len){
   int i = 1;
   if (len == 0){return NULL;}
-  RelayAction * lastAction = new RelayAction(CONTROLLINO_D0, BELL_TIMING, 2000);
+  RelayAction * lastAction = new RelayAction(CONTROLLINO_D0, 2000);
   lastAction->setPreviousAction(NULL);
   while (i < len){
-    RelayAction * act = new RelayAction(CONTROLLINO_D0, BELL_TIMING, 2000);
+    RelayAction * act = new RelayAction(CONTROLLINO_D0, 2000);
     lastAction->setNextAction(act);
     act->setPreviousAction(lastAction);
     act->setNextAction(NULL);
